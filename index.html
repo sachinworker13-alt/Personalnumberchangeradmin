@@ -1,0 +1,3999 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>TextReplace Pro — Login</title>
+<style>
+
+/* ═══════════════════════════════════════════════
+   ANIMATED LOGIN SCREEN
+═══════════════════════════════════════════════ */
+#login-screen{
+  position:fixed;inset:0;z-index:99999;
+  display:flex;align-items:center;justify-content:center;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  overflow:hidden;
+}
+
+/* ── Animated gradient background ── */
+.login-bg{
+  position:absolute;inset:0;
+  background:linear-gradient(125deg,#0a0e1a,#0d1b3e,#0a1a0e,#1a0a1a,#0d1520,#0a0e1a);
+  background-size:400% 400%;
+  animation:bgShift 12s ease infinite;
+}
+@keyframes bgShift{
+  0%{background-position:0% 50%;}
+  25%{background-position:100% 0%;}
+  50%{background-position:100% 100%;}
+  75%{background-position:0% 100%;}
+  100%{background-position:0% 50%;}
+}
+
+/* ── Floating orbs ── */
+.login-orb{
+  position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;
+  animation:orbFloat 8s ease-in-out infinite;
+}
+.login-orb-1{width:400px;height:400px;background:rgba(59,130,246,.12);top:-100px;left:-100px;animation-delay:0s;}
+.login-orb-2{width:350px;height:350px;background:rgba(34,197,94,.08);bottom:-80px;right:-80px;animation-delay:-3s;}
+.login-orb-3{width:300px;height:300px;background:rgba(168,85,247,.07);top:50%;right:15%;animation-delay:-6s;}
+@keyframes orbFloat{
+  0%,100%{transform:translate(0,0) scale(1);}
+  33%{transform:translate(20px,-30px) scale(1.05);}
+  66%{transform:translate(-15px,20px) scale(0.95);}
+}
+
+/* ── Particle grid lines ── */
+.login-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(59,130,246,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(59,130,246,.04) 1px,transparent 1px);
+  background-size:50px 50px;
+  animation:gridPan 20s linear infinite;
+}
+@keyframes gridPan{from{background-position:0 0;}to{background-position:50px 50px;}}
+
+/* ── Card ── */
+.login-card{
+  background:rgba(13,21,32,.9);
+  border:1px solid rgba(59,130,246,.25);
+  border-radius:20px;
+  padding:38px 42px 34px;
+  width:min(430px,92vw);
+  box-shadow:0 32px 80px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.06);
+  position:relative;z-index:2;
+  animation:cardIn .5s cubic-bezier(.34,1.56,.64,1) both;
+  backdrop-filter:blur(20px);
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(30px) scale(.96);}to{opacity:1;transform:none;}}
+
+/* ── Logo ── */
+.login-logo{display:flex;align-items:center;gap:11px;margin-bottom:26px;}
+.login-logo-icon{
+  width:44px;height:44px;border-radius:12px;flex-shrink:0;
+  background:linear-gradient(135deg,#3b82f6,#1d4ed8);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;
+  box-shadow:0 4px 20px rgba(59,130,246,.5);
+  animation:iconPulse 3s ease-in-out infinite;
+}
+@keyframes iconPulse{
+  0%,100%{box-shadow:0 4px 20px rgba(59,130,246,.4);}
+  50%{box-shadow:0 4px 32px rgba(59,130,246,.8),0 0 0 4px rgba(59,130,246,.1);}
+}
+.login-logo-text{font-size:17px;font-weight:700;color:#e2e8f0;}
+.login-logo-sub{font-size:10px;color:#475569;margin-top:1px;letter-spacing:.3px;}
+
+/* ── Typography ── */
+.login-title{font-size:22px;font-weight:800;color:#f1f5f9;margin-bottom:5px;letter-spacing:-.4px;}
+.login-sub{font-size:12px;color:#64748b;margin-bottom:26px;line-height:1.5;}
+
+/* ── Fields ── */
+.login-field{margin-bottom:16px;}
+.login-label{
+  display:block;font-size:10px;font-weight:700;color:#64748b;
+  text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px;
+}
+.login-input{
+  width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);
+  border-radius:9px;color:#e2e8f0;font-family:inherit;
+  font-size:14px;padding:11px 14px;outline:none;
+  transition:border-color .2s,box-shadow .2s,background .2s;
+  -webkit-appearance:none;
+}
+.login-input:focus{
+  border-color:#3b82f6;background:rgba(59,130,246,.06);
+  box-shadow:0 0 0 3px rgba(59,130,246,.18);
+}
+.login-input::placeholder{color:#334155;}
+.login-input-wrap{position:relative;}
+.login-eye{
+  position:absolute;right:11px;top:50%;transform:translateY(-50%);
+  background:none;border:none;color:#475569;cursor:pointer;
+  font-size:15px;padding:4px;line-height:1;transition:color .15s;
+}
+.login-eye:hover{color:#94a3b8;}
+
+/* ── Animated Sign In Button ── */
+.login-btn{
+  width:100%;padding:13px;margin-top:6px;
+  background:linear-gradient(135deg,#3b82f6 0%,#2563eb 50%,#1d4ed8 100%);
+  background-size:200% 200%;
+  color:#fff;border:none;border-radius:10px;
+  font-family:inherit;font-size:14px;font-weight:700;
+  cursor:pointer;letter-spacing:.3px;
+  position:relative;overflow:hidden;
+  transition:transform .15s,box-shadow .15s,filter .15s;
+  box-shadow:0 4px 20px rgba(59,130,246,.35);
+  animation:btnGlow 3s ease-in-out infinite;
+}
+@keyframes btnGlow{
+  0%,100%{box-shadow:0 4px 20px rgba(59,130,246,.35);}
+  50%{box-shadow:0 4px 32px rgba(59,130,246,.6),0 0 0 2px rgba(59,130,246,.15);}
+}
+/* Shimmer sweep on hover */
+.login-btn::before{
+  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);
+  transition:left .4s;
+}
+.login-btn:hover::before{left:140%;}
+.login-btn:hover{transform:translateY(-2px);filter:brightness(1.1);}
+.login-btn:active{transform:scale(.97) translateY(0);}
+.login-btn:disabled{opacity:.55;cursor:not-allowed;animation:none;transform:none;}
+
+/* ── Change Creds button ── */
+.login-change-btn{
+  width:100%;padding:9px;margin-top:10px;
+  background:transparent;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:9px;color:#64748b;
+  font-family:inherit;font-size:12px;font-weight:600;
+  cursor:pointer;letter-spacing:.2px;
+  transition:all .2s;
+}
+.login-change-btn:hover{
+  background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.2);color:#94a3b8;
+  transform:translateY(-1px);
+}
+
+/* ── Messages ── */
+.login-error{
+  margin-top:12px;padding:9px 13px;
+  background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);
+  border-radius:7px;font-size:12px;color:#f87171;
+  display:flex;align-items:center;gap:7px;
+  animation:fadeSlideIn .2s ease;
+}
+.login-error.hide{display:none!important;}
+.login-success-msg{
+  margin-top:12px;padding:9px 13px;
+  background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);
+  border-radius:7px;font-size:12px;color:#4ade80;
+  display:none;align-items:center;gap:7px;
+}
+.login-success-msg.show{display:flex;}
+@keyframes fadeSlideIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:none;}}
+.login-lock{
+  text-align:center;margin-top:12px;padding:9px;
+  background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);
+  border-radius:7px;font-size:12px;color:#f87171;display:none;
+}
+.login-lock.show{display:block;}
+.login-divider{height:1px;background:rgba(255,255,255,.07);margin:18px 0 14px;}
+.login-footer{text-align:center;font-size:10px;color:#1e293b;}
+.login-footer strong{color:#334155;}
+
+/* ── SHAKE ── */
+@keyframes shake{
+  0%,100%{transform:translateX(0);}
+  15%{transform:translateX(-7px);}30%{transform:translateX(7px);}
+  45%{transform:translateX(-5px);}60%{transform:translateX(5px);}
+  75%{transform:translateX(-2px);}
+}
+.shake{animation:shake .4s ease!important;}
+
+/* ══════════════════════════════════════════════
+   CHANGE CREDENTIALS MODAL
+══════════════════════════════════════════════ */
+#creds-modal{
+  position:fixed;inset:0;z-index:999999;
+  background:rgba(0,0,0,.85);
+  display:none;align-items:center;justify-content:center;
+  backdrop-filter:blur(6px);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+#creds-modal.open{display:flex;}
+.creds-box{
+  background:#0d1520;border:1px solid rgba(59,130,246,.3);
+  border-radius:18px;padding:32px 36px 28px;width:min(420px,92vw);
+  box-shadow:0 24px 80px rgba(0,0,0,.8);
+  animation:cardIn .35s cubic-bezier(.34,1.56,.64,1) both;
+}
+.creds-title{font-size:18px;font-weight:800;color:#e2e8f0;margin-bottom:4px;}
+.creds-sub{font-size:12px;color:#64748b;margin-bottom:22px;line-height:1.5;}
+.creds-step{
+  background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);
+  border-radius:10px;padding:14px 16px;margin-bottom:14px;
+}
+.creds-step-title{font-size:11px;font-weight:700;color:#3b82f6;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;}
+.creds-input{
+  width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);
+  border-radius:8px;color:#e2e8f0;font-family:inherit;
+  font-size:13px;padding:9px 12px;outline:none;margin-bottom:8px;
+  transition:border-color .15s,box-shadow .15s;-webkit-appearance:none;
+}
+.creds-input:last-child{margin-bottom:0;}
+.creds-input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.15);}
+.creds-input::placeholder{color:#334155;font-size:12px;}
+.creds-hint{font-size:10px;color:#475569;margin-top:4px;line-height:1.4;}
+.creds-hint.green{color:#22c55e;}
+.creds-hint.red{color:#ef4444;}
+.creds-row{display:flex;gap:8px;margin-top:14px;}
+.creds-btn{
+  flex:1;padding:10px;border-radius:8px;font-family:inherit;
+  font-size:13px;font-weight:700;cursor:pointer;
+  border:none;transition:all .15s;position:relative;overflow:hidden;
+}
+.creds-btn::before{
+  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
+  transition:left .3s;
+}
+.creds-btn:hover::before{left:140%;}
+.creds-btn-save{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;box-shadow:0 4px 14px rgba(34,197,94,.3);}
+.creds-btn-save:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(34,197,94,.4);}
+.creds-btn-cancel{background:rgba(255,255,255,.06);color:#94a3b8;border:1px solid rgba(255,255,255,.1);}
+.creds-btn-cancel:hover{background:rgba(255,255,255,.1);color:#e2e8f0;}
+.creds-msg{
+  margin-top:10px;padding:8px 12px;border-radius:7px;
+  font-size:12px;display:none;
+}
+.creds-msg.ok{display:block;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:#4ade80;}
+.creds-msg.err{display:block;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#f87171;}
+
+/* ── strength bar ── */
+.strength-bar-wrap{height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:6px;}
+.strength-bar{height:100%;border-radius:2px;transition:width .3s,background .3s;width:0%;}
+
+/* ── APP ROOT hidden by default ── */
+#app-root{display:none;}
+
+/* ── TOOL BUTTON ANIMATIONS ── */
+.tbtn,.seg-btn,.tool-tab,.load-btn,.proc-btn,.proc-btn-num,.proc-btn-sheets,.add-lnk{
+  transition:all .18s cubic-bezier(.34,1.56,.64,1)!important;
+}
+.tbtn:hover{transform:translateY(-2px)!important;box-shadow:0 4px 12px rgba(59,130,246,.25)!important;}
+.tbtn.grn:hover{box-shadow:0 4px 12px rgba(34,197,94,.3)!important;}
+.seg-btn:hover:not(.active){transform:translateY(-1px)!important;}
+.seg-btn.active{transform:none!important;}
+.tool-tab:hover:not(.active){transform:translateY(-1px)!important;}
+.proc-btn:hover{transform:translateY(-2px)!important;filter:brightness(1.08)!important;}
+.proc-btn:active,.tbtn:active{transform:scale(.96)!important;}
+.load-btn:hover{transform:translateY(-2px)!important;filter:brightness(1.1)!important;}
+
+</style>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+[data-theme=dark]{--bg:#0f1117;--sb:#161b27;--sb-bd:#1e2535;--acc:#3b82f6;--acc-h:#2563eb;--acc-dim:rgba(59,130,246,.15);--grn:#22c55e;--grn-dim:rgba(34,197,94,.12);--amb:#f59e0b;--red:#ef4444;--tx:#e2e8f0;--tx2:#94a3b8;--tx3:#475569;--bd:#1e2d45;--inp:#0d1520;--inp-b:#1e3050;--out-bg:#0d1520;--pane:#0f1117;--modal-bg:rgba(0,0,0,.75);}
+[data-theme=light]{--bg:#f8fafc;--sb:#ffffff;--sb-bd:#e2e8f0;--acc:#3b82f6;--acc-h:#2563eb;--acc-dim:rgba(59,130,246,.1);--grn:#16a34a;--grn-dim:rgba(22,163,74,.1);--amb:#d97706;--red:#dc2626;--tx:#0f172a;--tx2:#475569;--tx3:#94a3b8;--bd:#e2e8f0;--inp:#f1f5f9;--inp-b:#cbd5e1;--out-bg:#ffffff;--pane:#f8fafc;--modal-bg:rgba(0,0,0,.5);}
+[data-theme=warm]{--bg:#1c1410;--sb:#241a12;--sb-bd:#3d2b1a;--acc:#f97316;--acc-h:#ea6c0a;--acc-dim:rgba(249,115,22,.15);--grn:#22c55e;--grn-dim:rgba(34,197,94,.12);--amb:#f59e0b;--red:#ef4444;--tx:#fde8d0;--tx2:#d4a882;--tx3:#8a6548;--bd:#3d2b1a;--inp:#150f08;--inp-b:#3d2b1a;--out-bg:#150f08;--pane:#1c1410;--modal-bg:rgba(0,0,0,.75);}
+[data-theme=ocean]{--bg:#050d1a;--sb:#081628;--sb-bd:#0e2240;--acc:#06b6d4;--acc-h:#0891b2;--acc-dim:rgba(6,182,212,.15);--grn:#22c55e;--grn-dim:rgba(34,197,94,.12);--amb:#f59e0b;--red:#ef4444;--tx:#cae8f0;--tx2:#7baec0;--tx3:#3a6070;--bd:#0e2240;--inp:#04090f;--inp-b:#0e2240;--out-bg:#04090f;--pane:#050d1a;--modal-bg:rgba(0,0,0,.8);}
+[data-theme=forest]{--bg:#0a1a0e;--sb:#0e2215;--sb-bd:#163320;--acc:#22c55e;--acc-h:#16a34a;--acc-dim:rgba(34,197,94,.15);--grn:#4ade80;--grn-dim:rgba(74,222,128,.12);--amb:#f59e0b;--red:#ef4444;--tx:#d4f0da;--tx2:#86c995;--tx3:#3a6b44;--bd:#163320;--inp:#060e08;--inp-b:#163320;--out-bg:#060e08;--pane:#0a1a0e;--modal-bg:rgba(0,0,0,.8);}
+
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;}
+.app{display:flex;height:100vh;overflow:hidden;}
+
+/* SIDEBAR */
+.sb{width:250px;min-width:250px;background:var(--sb);border-right:1px solid var(--sb-bd);display:flex;flex-direction:column;overflow:hidden;}
+.sb-hd{padding:10px 12px 8px;border-bottom:1px solid var(--sb-bd);display:flex;align-items:center;gap:6px;}
+.sb-title{font-size:13px;font-weight:700;color:var(--tx);}
+.sb-sub{font-size:9px;color:var(--tx3);}
+.sb-scroll{overflow-y:auto;flex:1;}
+.sb-scroll::-webkit-scrollbar{width:3px;}
+.sb-scroll::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px;}
+.sbs{padding:8px 12px 0;}
+.lbl{font-size:10px;font-weight:600;color:var(--tx3);letter-spacing:.7px;text-transform:uppercase;margin-bottom:5px;display:block;}
+.sep{height:1px;background:var(--sb-bd);margin:7px 0;}
+
+/* INPUTS */
+input[type=text],textarea{background:var(--inp);border:1px solid var(--inp-b);border-radius:6px;color:var(--tx);font-family:inherit;font-size:12px;padding:5px 7px;outline:none;width:100%;transition:border-color .15s;}
+input[type=text]:focus,textarea:focus{border-color:var(--acc);}
+input[type=text]::placeholder,textarea::placeholder{color:var(--tx3);}
+.add-lnk{font-size:11px;color:var(--acc);background:none;border:none;cursor:pointer;padding:4px 0 0;font-family:inherit;text-align:left;display:block;}
+
+/* TOOL TABS */
+.tool-tabs{display:flex;gap:3px;padding:8px 12px 0;}
+.tool-tab{flex:1;text-align:center;padding:4px 0;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--inp-b);background:transparent;color:var(--tx3);font-family:inherit;}
+.tool-tab.active{background:var(--acc);color:#fff;border-color:var(--acc);}
+
+/* NUMBERS PANEL */
+#num-panel{}
+.map-rows{display:flex;flex-direction:column;gap:5px;max-height:200px;overflow-y:auto;}
+.map-rows::-webkit-scrollbar{width:3px;}
+.map-rows::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px;}
+.map-row{background:var(--inp);border:1px solid var(--inp-b);border-radius:7px;padding:6px 8px 4px;position:relative;}
+.map-ins{display:flex;gap:4px;align-items:center;}
+.map-del{position:absolute;top:2px;right:3px;background:none;border:none;color:var(--tx3);cursor:pointer;font-size:13px;padding:2px 4px;border-radius:3px;}
+.map-del:hover{color:var(--red);}
+.map-pv{font-size:10px;color:var(--grn);font-family:'Courier New',monospace;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.map-inp-sm{width:52px!important;flex-shrink:0;font-family:'Courier New',monospace!important;}
+.map-inp-lg{flex:1;font-family:'Courier New',monospace!important;}
+.pat-rows{display:flex;flex-direction:column;gap:4px;max-height:90px;overflow-y:auto;}
+.pat-row{display:flex;gap:4px;align-items:center;}
+.pat-row input{flex:1;font-family:'Courier New',monospace!important;}
+.pat-del{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:13px;padding:1px 4px;border-radius:3px;}
+.pat-del:hover{color:var(--red);}
+
+/* ── Bulk / Import-Export Pattern controls ── */
+.pat-actions{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;}
+.pat-act-btn{padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;cursor:pointer;border:1px solid var(--inp-b);background:transparent;color:var(--tx2);font-family:inherit;transition:all .15s;white-space:nowrap;}
+.pat-act-btn:hover{border-color:var(--acc);color:var(--acc);background:var(--acc-dim);}
+.pat-act-btn.grn{border-color:var(--grn);color:var(--grn);}
+.pat-act-btn.grn:hover{background:var(--grn-dim);}
+.pat-act-btn.red{border-color:var(--red);color:var(--red);}
+.pat-act-btn.red:hover{background:rgba(239,68,68,.1);}
+
+/* ── Bulk / Import Modal ── */
+#bulk-modal,#impexp-modal{position:fixed;inset:0;z-index:9999;background:var(--modal-bg);display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+#bulk-modal.open,#impexp-modal.open{display:flex;}
+.bulk-box,.impexp-box{background:var(--sb);border:1px solid var(--bd);border-radius:14px;padding:24px 26px 20px;width:min(460px,94vw);box-shadow:0 20px 60px rgba(0,0,0,.6);animation:cardIn .25s ease both;}
+.bulk-title,.impexp-title{font-size:14px;font-weight:800;color:var(--tx);margin-bottom:4px;}
+.bulk-sub,.impexp-sub{font-size:11px;color:var(--tx3);margin-bottom:12px;line-height:1.5;}
+.bulk-ta{width:100%;height:130px;background:var(--inp);border:1px solid var(--inp-b);border-radius:7px;color:var(--tx);font-family:'Courier New',monospace;font-size:12px;padding:9px 11px;outline:none;resize:vertical;line-height:1.7;}
+.bulk-ta:focus{border-color:var(--acc);}
+.bulk-hint{font-size:10px;color:var(--tx3);margin-top:5px;line-height:1.5;}
+.bulk-row,.impexp-row{display:flex;gap:8px;margin-top:12px;}
+.bulk-btn,.impexp-btn{flex:1;padding:8px;border-radius:7px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .15s;}
+.bulk-btn-ok{background:var(--acc);color:#fff;}
+.bulk-btn-ok:hover{filter:brightness(1.1);}
+.bulk-btn-cancel,.impexp-btn-cancel{background:rgba(255,255,255,.06);color:var(--tx2);border:1px solid var(--bd)!important;}
+.bulk-btn-cancel:hover,.impexp-btn-cancel:hover{background:rgba(255,255,255,.1);}
+.impexp-tabs{display:flex;gap:3px;margin-bottom:12px;}
+.impexp-tab{flex:1;text-align:center;padding:5px 0;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--inp-b);background:transparent;color:var(--tx3);font-family:inherit;}
+.impexp-tab.active{background:var(--acc);color:#fff;border-color:var(--acc);}
+.impexp-export-area{background:var(--inp);border:1px solid var(--inp-b);border-radius:7px;padding:10px;font-size:11px;color:var(--tx2);font-family:'Courier New',monospace;max-height:160px;overflow-y:auto;line-height:1.6;word-break:break-all;}
+.impexp-dl-row{display:flex;gap:6px;margin-top:8px;}
+.impexp-dl-btn{padding:6px 14px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--inp-b);background:var(--acc-dim);color:var(--acc);font-family:inherit;transition:all .15s;}
+.impexp-dl-btn:hover{background:var(--acc);color:#fff;}
+.impexp-msg{font-size:11px;margin-top:8px;padding:6px 10px;border-radius:6px;display:none;}
+.impexp-msg.ok{display:block;background:var(--grn-dim);color:var(--grn);}
+.impexp-msg.err{display:block;background:rgba(239,68,68,.1);color:var(--red);}
+.det-sel{display:flex;gap:8px;margin-bottom:4px;}
+.det-sel a{font-size:11px;color:var(--acc);cursor:pointer;text-decoration:underline;}
+.det-list{display:flex;flex-direction:column;gap:3px;max-height:170px;overflow-y:auto;}
+.det-list::-webkit-scrollbar{width:3px;}
+.det-list::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px;}
+.det-item{display:flex;align-items:flex-start;gap:5px;background:var(--inp);border:1px solid var(--inp-b);border-radius:5px;padding:5px 7px;cursor:pointer;}
+.det-item.on{border-color:rgba(59,130,246,.4);}
+.det-cb{accent-color:var(--acc);width:13px;height:13px;flex-shrink:0;margin-top:2px;cursor:pointer;}
+.det-nfo{flex:1;min-width:0;}
+.det-o{font-family:'Courier New',monospace;font-size:12px;color:var(--tx);word-break:break-all;}
+.det-t{font-size:10px;color:var(--tx3);margin-top:1px;}
+.det-r{font-size:10px;color:var(--grn);font-family:'Courier New',monospace;margin-top:1px;word-break:break-all;}
+.det-w{font-size:10px;color:var(--amb);margin-top:1px;}
+
+/* SHEETS PANEL */
+#sheets-panel{}
+.src-tabs{display:flex;gap:3px;margin-bottom:6px;}
+.src-tab{flex:1;text-align:center;padding:3px 0;border-radius:4px;font-size:10px;font-weight:600;cursor:pointer;border:1px solid var(--inp-b);background:transparent;color:var(--tx3);font-family:inherit;}
+.src-tab.active{background:var(--acc);color:#fff;border-color:var(--acc);}
+.sheet-hint{font-size:10px;color:var(--tx3);margin-top:4px;line-height:1.5;}
+.load-row{display:flex;gap:4px;margin-top:5px;}
+.load-btn{padding:5px 12px;background:var(--acc);color:#fff;border:none;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;}
+.load-btn:hover{background:var(--acc-h);}
+.load-status{font-size:10px;padding:4px 6px;border-radius:5px;margin-top:4px;display:none;}
+.load-status.ok{background:var(--grn-dim);color:var(--grn);display:block;}
+.load-status.err{background:rgba(239,68,68,.12);color:var(--red);display:block;}
+.ds-preview{padding:6px 12px;}
+.ds-table{width:100%;border-collapse:collapse;font-size:10px;}
+.ds-table th{background:rgba(59,130,246,.15);color:var(--acc);font-weight:600;padding:3px 5px;text-align:left;border:1px solid var(--bd);}
+.ds-table td{padding:3px 5px;border:1px solid var(--bd);color:var(--tx2);font-family:monospace;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.manual-ta{height:72px;font-size:11px;resize:vertical;font-family:monospace!important;}
+.var-ph{padding:6px 12px;}
+
+/* DELETE UNMATCHED TOGGLE */
+
+
+/* PROCESS BUTTONS */
+.proc-btn{margin:8px 12px 2px;padding:9px;color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;width:calc(100% - 24px);}
+.proc-btn-sheets{background:var(--grn);}
+.proc-btn-sheets:hover{filter:brightness(.9);}
+.proc-btn-num{background:var(--acc);}
+.proc-btn-num:hover{background:var(--acc-h);}
+.proc-btn-rmdig{background:linear-gradient(135deg,#dc2626,#b91c1c);margin-top:5px;}
+.proc-btn-rmdig:hover{filter:brightness(1.1);}
+.rst-row{text-align:center;padding-bottom:6px;}
+.rst-row button{background:none;border:none;color:var(--tx3);font-size:11px;cursor:pointer;font-family:inherit;}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{display:flex;align-items:center;gap:8px;padding:7px 14px;border-bottom:1px solid var(--bd);background:var(--sb);flex-shrink:0;}
+.tb-path{font-size:12px;color:var(--tx2);}
+.tb-path b{color:var(--tx);}
+.tb-r{margin-left:auto;display:flex;gap:6px;align-items:center;}
+.tbtn{padding:5px 11px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--bd);background:transparent;color:var(--tx2);font-family:inherit;transition:all .15s;}
+.tbtn:hover{background:var(--acc-dim);border-color:var(--acc);color:var(--acc);}
+.tbtn.grn{background:var(--grn);border-color:var(--grn);color:#fff;}
+.tbtn.grn:hover{filter:brightness(.9);}
+.spill{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500;}
+.spill.ok{background:var(--grn-dim);color:var(--grn);}
+.spill.warn{background:rgba(245,158,11,.12);color:var(--amb);}
+
+/* THEME DROPDOWN */
+.theme-wrap{position:relative;}
+.theme-btn{padding:5px 11px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--bd);background:transparent;color:var(--tx2);font-family:inherit;}
+.theme-btn:hover{border-color:var(--acc);color:var(--acc);}
+.theme-dd{position:absolute;right:0;top:calc(100% + 4px);background:var(--sb);border:1px solid var(--bd);border-radius:8px;padding:4px;z-index:1000;min-width:130px;display:none;box-shadow:0 8px 24px rgba(0,0,0,.4);}
+.theme-dd.open{display:block;}
+.theme-opt{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:5px;cursor:pointer;font-size:12px;color:var(--tx2);}
+.theme-opt:hover,.theme-opt.sel{background:var(--acc-dim);color:var(--acc);}
+.theme-sw{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+
+/* MODEBAR */
+.modebar{display:flex;align-items:center;gap:6px;padding:0 14px;background:var(--sb);border-bottom:1px solid var(--bd);height:38px;flex-shrink:0;}
+.seg{display:flex;gap:3px;}
+.seg-btn{padding:4px 11px;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--inp-b);background:transparent;color:var(--tx3);font-family:inherit;}
+.seg-btn.active{background:var(--acc);color:#fff;border-color:var(--acc);}
+.seg-btn:hover:not(.active){border-color:var(--acc);color:var(--acc);}
+.mb-r{margin-left:auto;display:flex;gap:12px;font-size:11px;color:var(--tx3);}
+
+/* SPLIT */
+.split{flex:1;display:flex;overflow:hidden;}
+.pane{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.pane+.pane{border-left:1px solid var(--bd);}
+.pane-hd{font-size:10px;font-weight:600;color:var(--tx3);letter-spacing:.6px;text-transform:uppercase;padding:6px 14px;background:var(--sb);border-bottom:1px solid var(--bd);flex-shrink:0;}
+.pane-body{flex:1;overflow:hidden;display:flex;flex-direction:column;background:var(--pane);}
+.pane-body::-webkit-scrollbar{width:4px;}
+.pane-body::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px;}
+.dvdr{width:5px;background:var(--bd);cursor:col-resize;flex-shrink:0;}
+.dvdr:hover,.dvdr.drag{background:var(--acc);}
+#ci{background:var(--pane);border:none;color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;line-height:1.85;width:100%;flex:1;outline:none;padding:16px 20px;overflow-y:auto;}
+
+/* OUTPUT STYLES */
+.out-wrap{padding:0;background:var(--out-bg);}
+.plain-out{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;line-height:1.85;color:var(--tx);word-break:break-word;background:var(--out-bg);padding:20px 24px;}
+.plain-out mark{background:rgba(34,197,94,.22)!important;color:var(--grn)!important;border-radius:3px;padding:0 2px;}
+.font-out{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;line-height:1.85;color:var(--tx);word-break:break-word;background:var(--out-bg);padding:20px 24px;}
+.seo-out h1{font-size:22px;font-weight:800;color:var(--tx);margin:0 0 16px;line-height:1.25;}
+.seo-out h2{font-size:16px;font-weight:700;color:var(--tx);margin:22px 0 9px;border-bottom:1px solid var(--bd);padding-bottom:5px;}
+.seo-out p{font-size:13px;color:var(--tx2);line-height:1.9;margin:0 0 13px;}
+.cre-out .c-h1{font-size:24px;font-weight:900;background:linear-gradient(135deg,#3b82f6,#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin:0 0 18px;}
+.cre-out .c-h2{font-size:13px;font-weight:700;color:#fff;padding:7px 14px;border-radius:6px;margin:20px 0 10px;display:inline-block;}
+.cre-h2-blue{background:linear-gradient(90deg,#1e3a8a,#2563eb);}
+.cre-h2-purple{background:linear-gradient(90deg,#4c1d95,#7c3aed);}
+.cre-h2-teal{background:linear-gradient(90deg,#134e4a,#0d9488);}
+.cre-h2-pink{background:linear-gradient(90deg,#831843,#db2777);}
+.cre-out .c-p{font-size:13px;color:var(--tx2);line-height:1.9;padding:12px 14px;background:var(--inp);border-left:3px solid var(--acc);border-radius:0 6px 6px 0;margin:0 0 10px;}
+
+/* WP EDITOR */
+.wp-wrap{display:flex;flex-direction:column;height:100%;padding:10px;}
+.wp-toolbar{display:flex;gap:3px;flex-wrap:wrap;padding:7px 9px;background:var(--inp);border-bottom:1px solid var(--inp-b);border-radius:7px 7px 0 0;}
+.wp-btn{background:none;border:1px solid var(--inp-b);border-radius:4px;color:var(--tx2);cursor:pointer;font-size:12px;padding:3px 7px;font-family:inherit;transition:all .15s;min-width:26px;}
+.wp-btn:hover{background:var(--acc-dim);border-color:var(--acc);color:var(--acc);}
+.wp-sel{background:var(--inp);border:1px solid var(--inp-b);border-radius:4px;color:var(--tx);font-size:12px;padding:3px 5px;font-family:inherit;cursor:pointer;}
+.wp-ed{background:var(--out-bg);border:1px solid var(--inp-b);border-radius:0 0 7px 7px;color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;line-height:1.8;padding:14px 16px;flex:1;outline:none;overflow-y:auto;}
+.wp-ed:focus{border-color:var(--acc);}
+.wp-ed h1{font-size:22px;font-weight:800;margin:0 0 14px;}
+.wp-ed h2{font-size:17px;font-weight:700;margin:20px 0 8px;border-bottom:1px solid var(--bd);padding-bottom:5px;}
+.wp-ed h3{font-size:14px;font-weight:600;margin:14px 0 5px;color:var(--tx2);}
+.wp-ed p{margin:0 0 12px;color:var(--tx2);}
+.wp-ed ul,ol{margin:0 0 12px 20px;}
+.wp-ed li{margin-bottom:4px;color:var(--tx2);}
+.wp-ed a{color:var(--acc);}
+
+/* FIND/REPLACE BAR */
+.fr-bar{display:flex;gap:5px;padding:6px 10px;background:var(--inp);border-bottom:1px solid var(--inp-b);align-items:center;flex-wrap:wrap;}
+.fr-bar input{width:130px;font-size:11px;padding:3px 6px;}
+.fr-btn{padding:3px 10px;border-radius:4px;font-size:11px;border:1px solid var(--inp-b);background:transparent;color:var(--tx2);cursor:pointer;font-family:inherit;}
+.fr-btn:hover{border-color:var(--acc);color:var(--acc);}
+.fr-count{font-size:10px;color:var(--tx3);}
+
+/* STATUS BAR */
+.statusbar{padding:4px 14px;border-top:1px solid var(--bd);background:var(--sb);display:flex;align-items:center;font-size:11px;color:var(--tx3);flex-shrink:0;}
+
+/* ── Rich Input Editor ── */
+#ci{
+  background:var(--pane);
+  color:var(--tx);
+}
+/* Strip hardcoded colors from pasted Google Docs content */
+#ci *{color:inherit!important;background:transparent!important;font-family:inherit!important;}
+#ci h1{font-size:1.65em;font-weight:800;color:var(--tx)!important;margin:.5em 0 .3em;line-height:1.2;border-bottom:2px solid var(--bd);padding-bottom:.2em;}
+#ci h2{font-size:1.3em;font-weight:700;color:var(--tx)!important;margin:.6em 0 .25em;border-bottom:1px solid var(--bd);padding-bottom:2px;}
+#ci h3{font-size:1.05em;font-weight:700;color:var(--tx2)!important;margin:.5em 0 .15em;}
+#ci h4,#ci h5,#ci h6{font-size:.95em;font-weight:600;color:var(--tx2)!important;margin:.4em 0 .1em;}
+#ci p{margin:.1em 0 .5em;color:var(--tx)!important;line-height:1.85;}
+#ci ul,#ci ol{margin:.2em 0 .5em;padding-left:1.5em;color:var(--tx)!important;}
+#ci li{margin-bottom:4px;color:var(--tx)!important;}
+#ci b,#ci strong{font-weight:700;color:var(--tx)!important;}
+#ci i,#ci em{font-style:italic;color:var(--tx2)!important;}
+#ci a{color:var(--acc)!important;text-decoration:underline;}
+#ci span{color:var(--tx)!important;}
+#ci div:not(#ci){color:var(--tx)!important;}
+
+/* ── Rich Font Output (same structure as plain) ── */
+#out-font{
+  background:var(--out-bg);color:var(--tx);padding:20px 24px;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-size:13px;line-height:1.85;word-break:break-word;white-space:normal;
+}
+#out-font *{color:inherit!important;background:transparent!important;}
+#out-font h1{font-size:1.6em;font-weight:800;color:var(--tx)!important;margin:.5em 0 .3em;line-height:1.2;border-bottom:2px solid var(--bd);padding-bottom:.2em;}
+#out-font h2{font-size:1.25em;font-weight:700;color:var(--tx)!important;margin:.6em 0 .25em;border-bottom:1px solid var(--bd);padding-bottom:2px;}
+#out-font h3{font-size:1.05em;font-weight:700;color:var(--tx2)!important;margin:.5em 0 .15em;}
+#out-font h4,#out-font h5,#out-font h6{font-size:.95em;font-weight:600;color:var(--tx2)!important;margin:.4em 0 .1em;}
+#out-font p{margin:.1em 0 .5em;color:var(--tx)!important;line-height:1.85;}
+#out-font ul,#out-font ol{margin:.2em 0 .5em;padding-left:1.5em;color:var(--tx)!important;}
+#out-font li{margin-bottom:4px;color:var(--tx)!important;}
+#out-font b,#out-font strong{font-weight:700;color:var(--tx)!important;}
+#out-font i,#out-font em{font-style:italic;color:var(--tx2)!important;}
+#out-font a{color:var(--acc)!important;}
+#out-font mark{background:rgba(34,197,94,.22)!important;color:var(--grn)!important;border-radius:3px;padding:0 3px;}
+
+/* ── Rich Plain Output ── */
+#out-plain{
+  background:var(--out-bg);
+  color:var(--tx);
+  padding:20px 24px;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-size:13px;
+  line-height:1.85;
+  word-break:break-word;
+}
+/* Strip hardcoded colors from output HTML too */
+#out-plain *{color:inherit!important;background:transparent!important;}
+#out-plain mark{background:rgba(34,197,94,.22)!important;color:var(--grn)!important;border-radius:3px;padding:0 3px;}
+#out-plain h1{font-size:1.6em;font-weight:800;color:var(--tx)!important;margin:.5em 0 .3em;line-height:1.2;border-bottom:2px solid var(--bd);padding-bottom:.2em;}
+#out-plain h2{font-size:1.25em;font-weight:700;color:var(--tx)!important;margin:.6em 0 .25em;border-bottom:1px solid var(--bd);padding-bottom:2px;}
+#out-plain h3{font-size:1.05em;font-weight:700;color:var(--tx2)!important;margin:.5em 0 .15em;}
+#out-plain h4,#out-plain h5,#out-plain h6{font-size:.95em;font-weight:600;color:var(--tx2)!important;margin:.4em 0 .1em;}
+#out-plain p{margin:.1em 0 .5em;color:var(--tx)!important;line-height:1.85;}
+#out-plain ul,#out-plain ol{margin:.2em 0 .5em;padding-left:1.5em;color:var(--tx)!important;}
+#out-plain li{margin-bottom:4px;color:var(--tx)!important;}
+#out-plain b,#out-plain strong{font-weight:700;color:var(--tx)!important;}
+#out-plain i,#out-plain em{font-style:italic;color:var(--tx2)!important;}
+#out-plain a{color:var(--acc)!important;}
+#out-plain span{color:inherit!important;}
+
+/* ── Placeholder ── */
+#ci-placeholder{color:var(--tx3)!important;background:transparent;}
+
+/* ── Topbar, modebar, pane-hd ── */
+.topbar{background:var(--sb);border-bottom:1px solid var(--bd);}
+.tb-path{color:var(--tx2);}
+.tb-path b{color:var(--tx);}
+.modebar{background:var(--sb);border-bottom:1px solid var(--bd);}
+.mb-r{color:var(--tx2);}
+.pane-hd{background:var(--sb);color:var(--tx2);border-bottom:1px solid var(--bd);font-weight:700;}
+
+/* ── WP Toolbar visibility ── */
+.wp-toolbar{background:var(--inp);border-bottom:1px solid var(--inp-b);}
+.wp-btn{background:var(--inp);border:1px solid var(--inp-b);color:var(--tx2);}
+.wp-btn:hover{background:var(--acc-dim);border-color:var(--acc);color:var(--acc);}
+.wp-sel{background:var(--inp);border:1px solid var(--inp-b);color:var(--tx);}
+.fr-bar{background:var(--inp);border-bottom:1px solid var(--inp-b);}
+.fr-bar input{background:var(--inp);border:1px solid var(--inp-b);color:var(--tx) !important;}
+.fr-bar input::placeholder{color:var(--tx3) !important;}
+.fr-btn{background:var(--inp) !important;border:1px solid var(--inp-b) !important;color:var(--tx2) !important;font-weight:600;}
+.fr-btn:hover{border-color:var(--acc) !important;color:var(--acc) !important;background:var(--acc-dim) !important;}
+.fr-count{color:var(--tx3);}
+/* Ensure the "Find & Replace:" label is always visible */
+.fr-bar span{color:var(--tx2) !important;}
+
+/* ── Sidebar text ── */
+.sbs .lbl{color:var(--tx3);}
+.sbs{color:var(--tx2);}
+.det-o{color:var(--tx);}
+.det-t{color:var(--tx3);}
+.det-r{color:var(--grn);}
+.det-w{color:var(--amb);}
+.det-item{background:var(--inp);border-color:var(--inp-b);}
+.map-row{background:var(--inp);border-color:var(--inp-b);}
+.map-pv{color:var(--grn);}
+.add-lnk{color:var(--acc);}
+.rst-row button{color:var(--tx2) !important;border:1px solid var(--inp-b) !important;border-radius:5px;padding:3px 10px;background:var(--inp) !important;}
+.rst-row button:hover{color:var(--red) !important;border-color:var(--red) !important;}
+.statusbar{background:var(--sb);color:var(--tx2);border-top:1px solid var(--bd);}
+#sb-msg{color:var(--tx2);}
+/* Pat action buttons */
+.pat-act-btn{color:var(--tx2) !important;border-color:var(--inp-b) !important;}
+.pat-act-btn:hover{border-color:var(--acc) !important;color:var(--acc) !important;}
+.pat-act-btn.grn{border-color:var(--grn) !important;color:var(--grn) !important;}
+.pat-act-btn.red{border-color:var(--red) !important;color:var(--red) !important;}
+
+/* ── Seg buttons (Plain/SEO/Font tabs) ── */
+.seg-btn{color:var(--tx3);border-color:var(--inp-b);background:transparent;}
+.seg-btn.active{background:var(--acc);color:#fff;border-color:var(--acc);}
+.seg-btn:hover:not(.active){border-color:var(--acc);color:var(--acc);}
+
+/* ── Tool tabs ── */
+.tool-tab{color:var(--tx3);border-color:var(--inp-b);background:transparent;}
+.tool-tab.active{background:var(--acc);color:#fff;border-color:var(--acc);}
+
+/* ── Output wrap background ── */
+.out-wrap{background:var(--out-bg);}
+.seo-out{background:var(--out-bg);color:var(--tx);}
+.font-out{background:var(--out-bg);color:var(--tx);}
+.seo-out h1{color:var(--tx);}
+.seo-out h2{color:var(--tx);border-bottom-color:var(--bd);}
+.seo-out p{color:var(--tx2);}
+
+/* ── Spill notification ── */
+.spill.ok{background:var(--grn-dim);color:var(--grn);}
+.spill.warn{background:rgba(245,158,11,.12);color:var(--amb);}
+
+/* ── tbtn (Copy, Download, etc) ── */
+.tbtn{color:var(--tx) !important;border-color:var(--inp-b) !important;background:var(--inp) !important;font-weight:600;}
+.tbtn:hover{background:var(--acc-dim) !important;border-color:var(--acc) !important;color:var(--acc) !important;}
+.tbtn.grn{background:var(--grn) !important;border-color:var(--grn) !important;color:#fff !important;}
+.tbtn.grn:hover{filter:brightness(.9) !important;}
+/* Theme button */
+.theme-btn{color:var(--tx) !important;border-color:var(--inp-b) !important;background:var(--inp) !important;font-weight:600;}
+.theme-btn:hover{border-color:var(--acc) !important;color:var(--acc) !important;}
+/* MODALS */
+.modal-ov{position:fixed;inset:0;background:var(--modal-bg);z-index:9999;display:flex;align-items:center;justify-content:center;}
+.modal-box{background:var(--sb);border:1px solid var(--bd);border-radius:12px;padding:20px;width:min(620px,93vw);display:flex;flex-direction:column;gap:12px;max-height:90vh;overflow-y:auto;}
+.modal-hd{display:flex;justify-content:space-between;align-items:center;}
+.modal-hd span{font-size:14px;font-weight:700;color:var(--tx);}
+.modal-hd button{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:20px;line-height:1;}
+.modal-ta{background:var(--inp);border:1px solid var(--inp-b);border-radius:8px;color:var(--tx);font-family:monospace;font-size:12px;padding:10px;height:200px;resize:none;outline:none;width:100%;}
+.batch-tabs{display:flex;gap:4px;border-bottom:1px solid var(--bd);padding-bottom:8px;}
+.batch-tab{padding:4px 14px;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--inp-b);background:transparent;color:var(--tx3);font-family:inherit;}
+.batch-tab.active{background:var(--acc);color:#fff;border-color:var(--acc);}
+.batch-table{width:100%;border-collapse:collapse;font-size:11px;}
+.batch-table th{background:var(--grn-dim);color:var(--grn);font-weight:600;padding:6px 8px;text-align:left;border:1px solid var(--bd);}
+.batch-table td{padding:5px 8px;border:1px solid var(--bd);color:var(--tx2);vertical-align:top;}
+.batch-table tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+.batch-edit{background:transparent;border:none;color:var(--tx2);font-family:inherit;font-size:11px;width:100%;outline:none;padding:0;}
+.batch-edit:focus{color:var(--tx);border-bottom:1px solid var(--acc);}
+.batch-edit.fn{color:var(--acc);font-family:monospace;}
+.batch-html-box{background:var(--out-bg);border:1px solid var(--bd);border-radius:6px;padding:14px;font-size:12px;line-height:1.85;color:var(--tx);max-height:320px;overflow-y:auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
+.batch-html-box h1{font-size:18px;font-weight:800;margin:0 0 10px;color:var(--tx);}
+.batch-html-box h2{font-size:14px;font-weight:700;margin:14px 0 6px;border-bottom:1px solid var(--bd);padding-bottom:3px;color:var(--tx);}
+.batch-html-box p{margin:0 0 8px;color:var(--tx2);}
+.batch-nav{display:flex;gap:6px;align-items:center;margin-bottom:8px;}
+.batch-nav button{padding:3px 10px;border-radius:4px;font-size:11px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;}
+.batch-nav button:hover{border-color:var(--acc);color:var(--acc);}
+.prog-wrap{background:var(--inp);border-radius:4px;height:6px;overflow:hidden;margin-top:4px;}
+.prog-bar{height:100%;background:var(--grn);border-radius:4px;transition:width .2s;}
+.modal-footer{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+#cfb{position:fixed;top:-999px;left:-999px;width:1px;height:1px;opacity:.01;pointer-events:none;}
+</style>
+
+<!-- ANTI-COPY / ANTI-INSPECT HARDENING -->
+<style>
+/* Disable text selection on non-editable UI chrome */
+body, .app, #app-root, #login-screen {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+/* Allow full editing in all editable zones — override without !important conflict */
+input, textarea,
+[contenteditable="true"],
+[contenteditable],
+#ci, #out-plain, #out-seo, #out-cre, #out-font {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
+  cursor: text !important;
+  pointer-events: auto !important;
+}
+/* Hide source in print */
+@media print {
+  body * { display: none !important; }
+  body::after {
+    display: block !important;
+    content: "Printing is disabled on this tool.";
+    font-size: 24px;
+    text-align: center;
+    margin-top: 40vh;
+    color: #333;
+  }
+}
+</style>
+
+</head>
+<body>
+
+<!-- ══════════ LOGIN SCREEN ══════════ -->
+<div id="login-screen">
+  <div class="login-bg"></div>
+  <div class="login-orb login-orb-1"></div>
+  <div class="login-orb login-orb-2"></div>
+  <div class="login-orb login-orb-3"></div>
+  <div class="login-grid"></div>
+
+  <div class="login-card" id="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">⚡</div>
+      <div>
+        <div class="login-logo-text">TextReplace Pro</div>
+        <div class="login-logo-sub">🔒 Secure Access Required</div>
+      </div>
+    </div>
+
+    <div class="login-title">Welcome back</div>
+    <div class="login-sub">Enter your credentials to continue.</div>
+
+    <div class="login-field">
+      <label class="login-label" for="l-user">Username</label>
+      <input class="login-input" type="text" id="l-user" placeholder="Enter username"
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+        onkeydown="if(event.key==='Enter')doLogin()"/>
+    </div>
+
+    <div class="login-field">
+      <label class="login-label" for="l-pass">Password</label>
+      <div class="login-input-wrap">
+        <input class="login-input" type="password" id="l-pass" placeholder="Enter password"
+          autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()"
+          style="padding-right:42px;"/>
+        <button class="login-eye" id="eye-btn" onclick="toggleEye()" title="Show/hide">👁</button>
+      </div>
+    </div>
+
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In →</button>
+
+    <div class="login-error hide" id="login-error">⚠ Incorrect credentials.</div>
+    <div class="login-lock" id="login-lock"></div>
+
+    <div class="login-divider"></div>
+    <div class="login-footer"><strong>Secured</strong> — Unauthorized access is prohibited</div>
+  </div>
+</div>
+
+<!-- ══════════ CHANGE CREDENTIALS MODAL ══════════ -->
+<div id="creds-modal">
+  <div class="creds-box">
+    <div class="creds-title">🔑 Change Credentials</div>
+    <div class="creds-sub">Verify your current password, then set new username and/or password.</div>
+
+    <!-- Step 1: Verify current password -->
+    <div class="creds-step">
+      <div class="creds-step-title">Step 1 — Verify Current Password</div>
+      <input class="creds-input" type="password" id="c-cur-pass" placeholder="Current password" autocomplete="off"/>
+    </div>
+
+    <!-- Step 2: New credentials -->
+    <div class="creds-step">
+      <div class="creds-step-title">Step 2 — New Credentials (leave blank to keep current)</div>
+      <input class="creds-input" type="text" id="c-new-user" placeholder="New username (leave blank to keep current)"
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input class="creds-input" type="password" id="c-new-pass" placeholder="New password (min 6 chars)"
+        autocomplete="off" oninput="checkStrength(this.value)"/>
+      <div class="strength-bar-wrap"><div class="strength-bar" id="strength-bar"></div></div>
+      <div class="creds-hint" id="strength-hint"></div>
+      <input class="creds-input" type="password" id="c-new-pass2" placeholder="Confirm new password"
+        autocomplete="off" style="margin-top:8px;"/>
+    </div>
+
+    <div class="creds-msg" id="creds-msg"></div>
+
+    <div class="creds-row">
+      <button class="creds-btn creds-btn-cancel" onclick="closeCredsModal()">Cancel</button>
+      <button class="creds-btn creds-btn-save" onclick="saveCredentials()">✓ Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ APP (hidden until login) ══════════ -->
+<div id="app-root">
+<div class="app">
+
+<!-- ======= SIDEBAR ======= -->
+<aside class="sb">
+  <div class="sb-hd">
+    <div>
+      <div class="sb-title">&#9889; TextReplace Pro</div>
+      <div class="sb-sub">Smart number &amp; batch replacement</div>
+    </div>
+  </div>
+  <div class="sb-scroll">
+
+    <!-- LOGGED IN USER BADGE -->
+    <div class="sbs" style="padding-top:8px;padding-bottom:4px;">
+      <div id="sb-user-badge" style="display:flex;align-items:center;gap:6px;padding:6px 9px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.15);border-radius:7px;">
+        <span style="width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;flex-shrink:0;"></span>
+        <span style="font-size:10px;color:#94a3b8;">Logged in as</span>
+        <span id="sb-current-user" style="font-size:11px;font-weight:700;color:#22c55e;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">—</span>
+      </div>
+    </div>
+
+    <!-- TOOL SELECT -->
+    <div class="sbs" style="padding-bottom:6px;">
+      <span class="lbl">Select Tool</span>
+      <div class="tool-tabs">
+        <button class="tool-tab active" id="tt-n" onclick="setTool('numbers')">Numbers</button>
+        <button class="tool-tab" id="tt-s" onclick="setTool('sheets')">Sheets</button>
+        <button class="tool-tab" id="tt-p" onclick="setTool('pdf')">Pdf</button>
+      </div>
+    </div>
+
+    <!-- ===== NUMBERS PANEL ===== -->
+    <div id="num-panel">
+      <div class="sep"></div>
+      <div class="sbs">
+        <span class="lbl">Number Mappings</span>
+        <div class="map-rows" id="map-rows"></div>
+        <button class="add-lnk" onclick="addMapRow()">+ Add mapping</button>
+        <div style="font-size:10px;color:var(--tx3);margin-top:5px;line-height:1.5;">
+          &#8226; Blank prefix = replace all numbers<br>
+          &#8226; Multiple replacements: comma separated<br>
+          &#8226; e.g. <span style="color:var(--acc);font-family:monospace">+18005550199, +15551234567</span><br>
+          &#8226; Suffix like <span style="color:var(--acc);font-family:monospace">(US)</span> auto-kept
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div class="sbs">
+        <span class="lbl">Custom Patterns <span id="pat-dot" style="color:var(--grn);font-size:9px;"></span></span>
+        <div class="pat-rows" id="pat-rows"></div>
+        <button class="add-lnk" onclick="addPatRow()">+ Add pattern</button>
+        <div class="pat-actions">
+          <button class="pat-act-btn" onclick="openBulkModal()" title="Add many patterns at once">&#10010; Bulk Add</button>
+          <button class="pat-act-btn grn" onclick="openImpExp('export')" title="Export all patterns">&#11015; Export</button>
+          <button class="pat-act-btn" onclick="openImpExp('import')" title="Import patterns from file or text">&#11014; Import</button>
+          <button class="pat-act-btn red" onclick="clearAllPats()" title="Remove all patterns">&#128465; Clear All</button>
+        </div>
+        <div style="font-size:10px;color:var(--tx3);margin-top:3px;line-height:1.5;">Paste undetected number. <span style="color:var(--grn);">&#128190; Auto-saved</span></div>
+      </div>
+      <div class="sep"></div>
+      <div class="sbs">
+        <span class="lbl">Detected <span id="det-badge" style="color:var(--acc);font-weight:500;"></span></span>
+        <div class="det-sel"><a onclick="selAll(true)">All</a><a onclick="selAll(false)">None</a></div>
+        <div class="det-list" id="det-list">
+          <div style="color:var(--tx3);font-size:11px;">Paste content to detect&#8230;</div>
+        </div>
+      </div>
+      <!-- PROCESS button for Numbers -->
+      <div style="margin-top:10px;">
+        <div class="sep" style="margin:0 0 0 0;"></div>
+
+        <button class="proc-btn proc-btn-num" onclick="doReplace()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Process
+        </button>
+        <button class="proc-btn proc-btn-rmdig" onclick="doRemoveUnhighlightedDigits()" title="Remove all digits from the output that were NOT replaced/highlighted green">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+          Remove Unhighlighted Digits
+        </button>
+        <div class="rst-row"><button onclick="doClear()">Reset All</button></div>
+      </div>
+    </div>
+
+    <!-- ===== SHEETS PANEL ===== -->
+    <div id="sheets-panel" style="display:none;">
+      <div class="sep"></div>
+      <div class="sbs">
+        <span class="lbl">Import Source</span>
+        <div class="src-tabs">
+          <button class="src-tab active" id="st-sheets" onclick="setSrc('sheets')">Google Docs URL</button>
+          <button class="src-tab" id="st-file" onclick="setSrc('file')">CSV File</button>
+        </div>
+        <div id="src-sheets-div">
+          <input type="text" id="sheet-url" placeholder="Paste Google Sheets or CSV URL"/>
+          <div class="sheet-hint">Google Sheets: File &#8594; Share &#8594; Publish to Web &#8594; CSV or use share link</div>
+          <div class="load-row"><button class="load-btn" id="load-btn-sheets" onclick="loadSheetData()">Load</button></div>
+          <div class="load-status" id="ls-sheets"></div>
+        </div>
+        <div id="src-file-div" style="display:none;">
+          <input type="file" id="csv-file" accept=".csv" style="font-size:11px;color:var(--tx2);background:var(--inp);border:1px solid var(--inp-b);border-radius:6px;padding:5px;width:100%;"/>
+          <div class="load-row"><button class="load-btn" onclick="loadCsvFile()">Load</button></div>
+          <div class="load-status" id="ls-file"></div>
+        </div>
+      </div>
+      <div class="ds-preview" id="ds-preview" style="display:none;">
+        <span class="lbl">Data Source Preview</span>
+        <div style="overflow-x:auto;"><table class="ds-table"><thead><tr><th>TITLE</th><th>FILENAME</th><th>REPLACEMENT</th></tr></thead><tbody id="ds-tbody"></tbody></table></div>
+        <div id="ds-more" style="font-size:10px;color:var(--grn);margin-top:3px;"></div>
+      </div>
+      <div class="sep"></div>
+      <div class="sbs">
+        <span class="lbl">Manual Config</span>
+        <textarea class="manual-ta" id="manual-config" placeholder="Format: Title | Filename | Replacement&#10;Example:&#10;John Doe | john_doc | Value1" oninput="parseManualConfig()"></textarea>
+        <div style="font-size:10px;color:var(--tx3);margin-top:3px;line-height:1.5;">One entry per line, separated by | or Tab</div>
+      </div>
+      <div class="sep"></div>
+      <div class="var-ph">
+        <span class="lbl">Variable Placeholder</span>
+        <input type="text" id="var-placeholder" placeholder="e.g. [NAME], {{COMPANY}}"/>
+        <div style="font-size:10px;color:var(--tx3);margin-top:4px;line-height:1.5;">Optional &#8212; replaced with <em style="color:var(--tx2);">Replacement</em> per row. Use <span style="color:var(--acc);font-family:monospace;">{{Title}}, {{Filename}}</span> directly in your doc.</div>
+        <div id="rows-status" style="font-size:11px;color:var(--grn);margin-top:5px;display:none;padding:4px 7px;background:var(--grn-dim);border-radius:5px;"></div>
+      </div>
+      <!-- PROCESS button for Sheets -->
+      <div>
+        <div class="sep" style="margin:0;"></div>
+        <button class="proc-btn proc-btn-sheets" onclick="processData()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Process Data
+        </button>
+        <div class="rst-row"><button onclick="resetSheets()">Reset All</button></div>
+      </div>
+    </div>
+
+    <!-- PDF PANEL placeholder -->
+    <div id="pdf-panel" style="display:none;">
+      <div class="sep"></div>
+      <div class="sbs" style="padding-bottom:12px;">
+        <span class="lbl">PDF Tool</span>
+        <div style="font-size:12px;color:var(--tx3);">Use the Sheets tab to generate and download PDFs in batch.</div>
+      </div>
+    </div>
+
+  </div>
+</aside>
+
+<!-- ======= MAIN ======= -->
+<div class="main">
+  <div class="topbar">
+    <span class="tb-path">Home / <b>Editor</b></span>
+    <div class="tb-r">
+      <span id="spill" class="spill" style="display:none;"></span>
+      <button class="tbtn" onclick="doCopy()">&#128203; Copy</button>
+      <div class="theme-wrap">
+        <button class="theme-btn" onclick="toggleThemeDD()">&#127912; Theme</button>
+        <div class="theme-dd" id="theme-dd">
+          <div class="theme-opt" data-t="system" onclick="setTheme('system')"><span class="theme-sw" style="background:linear-gradient(135deg,#fff 50%,#0f1117 50%);"></span>System</div>
+          <div class="theme-opt" data-t="light" onclick="setTheme('light')"><span class="theme-sw" style="background:#f8fafc;border:1px solid #ccc;"></span>Light</div>
+          <div class="theme-opt sel" data-t="dark" onclick="setTheme('dark')"><span class="theme-sw" style="background:#0f1117;"></span>Dark</div>
+          <div class="theme-opt" data-t="warm" onclick="setTheme('warm')"><span class="theme-sw" style="background:#f97316;"></span>Warm</div>
+          <div class="theme-opt" data-t="ocean" onclick="setTheme('ocean')"><span class="theme-sw" style="background:#06b6d4;"></span>Ocean</div>
+          <div class="theme-opt" data-t="forest" onclick="setTheme('forest')"><span class="theme-sw" style="background:#22c55e;"></span>Forest</div>
+        </div>
+      </div>
+      <button class="tbtn grn" id="dl-btn" onclick="onDownload()">&#11015; Download</button>
+      <button class="tbtn" id="logout-btn" onclick="doToolLogout()" title="Logout" style="padding:5px 11px;background:rgba(239,68,68,.1)!important;border-color:rgba(239,68,68,.3)!important;color:#f87171!important;">⏻ Logout</button>
+    </div>
+  </div>
+
+  <!-- MODE BAR: Plain | SEO | Creative | Font | WP Editor -->
+  <div class="modebar">
+    <div class="seg">
+      <button class="seg-btn active" id="tab-plain" onclick="setMode('plain')">Plain</button>
+      <button class="seg-btn" id="tab-seo" onclick="setMode('seo')">SEO</button>
+      <button class="seg-btn" id="tab-font" onclick="setMode('font')">Font</button>
+    </div>
+    <div class="mb-r"><span id="wc">0 words</span><span id="dc">0 detected</span></div>
+  </div>
+
+  <!-- SPLIT PANES -->
+  <div class="split" id="split">
+    <div class="pane" id="pi">
+      <div class="pane-hd">Input</div>
+      <div class="pane-body" style="position:relative;">
+        <div id="ci-placeholder" style="position:absolute;top:0;left:0;right:0;padding:14px 16px;color:var(--tx3);font-size:12px;pointer-events:none;line-height:1.8;z-index:1;">
+          Paste your content here — H1, H2, H3, bold, italic &amp; formatting are preserved<br><br>
+          Numbers tool: all phone formats detected<br>
+          &nbsp;&nbsp;+XX-XXX-XXX-XXXX [MX]<br>
+          &nbsp;&nbsp;+X-XXX-XXX-XXXX (US)<br><br>
+          Map numbers in sidebar then Process
+        </div>
+        <div id="ci" contenteditable="true" spellcheck="true"
+          style="outline:none;height:100%;padding:14px 16px;font-size:13px;line-height:1.85;color:var(--tx);word-break:break-word;overflow-y:auto;"
+          oninput="onInput()"></div>
+      </div>
+    </div>
+    <div class="dvdr" id="dvdr"></div>
+    <div class="pane" id="po">
+      <div class="pane-hd" id="out-hd">Output</div>
+      <div class="pane-body" id="out-body" style="flex-direction:column;overflow:hidden;">
+        <!-- WP Toolbar always shown above all outputs -->
+        <div id="wp-always-toolbar" style="flex-shrink:0;">
+          <div class="fr-bar" id="fr-bar">
+            <span style="font-size:11px;color:var(--tx3);font-weight:600;">Find &amp; Replace:</span>
+            <input type="text" id="fr-find" placeholder="Find..." style="width:110px;font-size:11px;padding:3px 6px;"/>
+            <input type="text" id="fr-repl" placeholder="Replace with..." style="width:120px;font-size:11px;padding:3px 6px;"/>
+            <button class="fr-btn" onclick="frReplace()">Replace All</button>
+            <button class="fr-btn" onclick="frFind()">Find</button>
+            <span class="fr-count" id="fr-count"></span>
+          </div>
+          <div class="wp-toolbar" style="border-radius:0;">
+            <select class="wp-sel" onchange="execFmt(this.value);this.value=''">
+              <option value="">Paragraph</option>
+              <option value="h1">H1</option>
+              <option value="h2">H2</option>
+              <option value="h3">H3</option>
+              <option value="p">P</option>
+            </select>
+            <button class="wp-btn" onclick="execCmd('bold')" title="Bold"><b>B</b></button>
+            <button class="wp-btn" onclick="execCmd('italic')" title="Italic"><i>I</i></button>
+            <button class="wp-btn" onclick="execCmd('underline')" title="Underline"><u>U</u></button>
+            <button class="wp-btn" onclick="execCmd('strikeThrough')" title="Strike"><s>S</s></button>
+            <button class="wp-btn" onclick="execCmd('insertUnorderedList')" title="Bullets">&#8801;</button>
+            <button class="wp-btn" onclick="execCmd('insertOrderedList')" title="Numbers">1.</button>
+            <button class="wp-btn" onclick="execCmd('justifyLeft')" title="Left">&#9664;</button>
+            <button class="wp-btn" onclick="execCmd('justifyCenter')" title="Center">&#9644;</button>
+            <button class="wp-btn" onclick="execCmd('justifyRight')" title="Right">&#9654;</button>
+            <button class="wp-btn" onclick="insertLink()" title="Link">&#128279;</button>
+            <button class="wp-btn" onclick="execCmd('removeFormat')" title="Clear">&#10005;</button>
+            <button class="wp-btn" onclick="execCmd('undo')">&#8617;</button>
+            <button class="wp-btn" onclick="execCmd('redo')">&#8618;</button>
+          </div>
+        </div>
+        <!-- All output views - each contenteditable so WP toolbar works on all -->
+        <div id="out-wrap" class="out-wrap" style="flex:1;overflow-y:auto;min-height:0;">
+          <div id="out-plain" class="plain-out" contenteditable="true" spellcheck="true" style="color:var(--tx3);font-size:12px;outline:none;">Output will appear here after processing&#8230;</div>
+          <div id="out-seo" class="seo-out" contenteditable="true" spellcheck="true" style="display:none;outline:none;"></div>
+          <div id="out-cre" class="cre-out" contenteditable="true" spellcheck="true" style="display:none;outline:none;"></div>
+          <div id="out-font" class="font-out" contenteditable="true" spellcheck="false" style="display:none;outline:none;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="statusbar">
+    <span id="sb-msg">Ready &#8212; paste content or load data</span>
+    <span style="margin-left:auto;" id="sb-r"></span>
+  </div>
+</div>
+</div>
+
+<!-- Clipboard fallback -->
+<textarea id="cfb" tabindex="-1" aria-hidden="true"></textarea>
+
+<!-- Bulk Add Patterns Modal -->
+<div id="bulk-modal" class="modal-ov" style="display:none;">
+  <div class="bulk-box">
+    <div class="bulk-title">&#10010; Bulk Add Custom Patterns</div>
+    <div class="bulk-sub">Paste one pattern per line. Each line becomes a separate custom pattern for number detection.</div>
+    <textarea class="bulk-ta" id="bulk-ta" placeholder="+52 800 461 1010&#10;+1-888-657-7856&#10;800 461 1010&#10;1-888-755-0513&#10;...one per line"></textarea>
+    <div class="bulk-hint">&#8226; Each non-empty line = one pattern &nbsp;&#8226; Duplicates are skipped automatically &nbsp;&#8226; All are auto-saved</div>
+    <div class="bulk-row">
+      <button class="bulk-btn bulk-btn-cancel" onclick="closeBulkModal()">Cancel</button>
+      <button class="bulk-btn bulk-btn-ok" onclick="applyBulkPatterns()">&#10003; Add Patterns</button>
+    </div>
+  </div>
+</div>
+
+<!-- Import / Export Patterns Modal -->
+<div id="impexp-modal" class="modal-ov" style="display:none;">
+  <div class="impexp-box">
+    <div class="impexp-title" id="impexp-title">Patterns</div>
+    <div class="impexp-tabs">
+      <button class="impexp-tab active" id="iet-export" onclick="switchImpExp('export')">&#11015; Export</button>
+      <button class="impexp-tab" id="iet-import" onclick="switchImpExp('import')">&#11014; Import</button>
+    </div>
+
+    <!-- Export panel -->
+    <div id="ie-export-panel">
+      <div class="impexp-sub">Copy or download all your saved custom patterns.</div>
+      <div class="impexp-export-area" id="ie-export-content"></div>
+      <div class="impexp-dl-row">
+        <button class="impexp-dl-btn" onclick="ieDownload('json')">&#11015; Download JSON</button>
+        <button class="impexp-dl-btn" onclick="ieDownload('txt')">&#11015; Download TXT</button>
+        <button class="impexp-dl-btn" onclick="ieCopyExport()">&#128203; Copy</button>
+      </div>
+    </div>
+
+    <!-- Import panel -->
+    <div id="ie-import-panel" style="display:none;">
+      <div class="impexp-sub">Paste JSON array <code style="background:var(--inp);padding:1px 4px;border-radius:3px;">["+1 888...", ...]</code>, a plain text list (one per line), or upload a file.</div>
+      <textarea class="bulk-ta" id="ie-import-ta" placeholder='["+1-888-657-7856", "+52 800 461 1010"]&#10;&#10;— or plain text, one pattern per line —&#10;+1-888-657-7856&#10;+52 800 461 1010' style="height:110px;"></textarea>
+      <div style="margin-top:8px;display:flex;align-items:center;gap:8px;">
+        <label style="font-size:11px;color:var(--tx2);cursor:pointer;display:flex;align-items:center;gap:6px;">
+          <input type="file" id="ie-file" accept=".json,.txt,.csv" style="display:none;" onchange="ieFileLoad(this)"/>
+          <button class="pat-act-btn" onclick="document.getElementById('ie-file').click()">&#128194; Load File</button>
+        </label>
+        <span id="ie-file-name" style="font-size:10px;color:var(--tx3);"></span>
+      </div>
+      <div style="margin-top:6px;display:flex;gap:5px;align-items:center;">
+        <label style="font-size:11px;color:var(--tx2);display:flex;align-items:center;gap:5px;cursor:pointer;">
+          <input type="checkbox" id="ie-merge" checked style="accent-color:var(--acc);"/> Merge with existing (uncheck to replace all)
+        </label>
+      </div>
+      <div class="impexp-msg" id="ie-msg"></div>
+    </div>
+
+    <div class="impexp-row">
+      <button class="impexp-btn impexp-btn-cancel" style="border:1px solid var(--bd);" onclick="closeImpExp()">Close</button>
+      <button class="impexp-btn" id="ie-action-btn" style="background:var(--acc);color:#fff;display:none;" onclick="applyImport()">&#10003; Import Patterns</button>
+    </div>
+  </div>
+</div>
+
+<!-- Copy modal -->
+<div id="cm" class="modal-ov" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-hd"><span>Select All (Ctrl+A) then Copy (Ctrl+C)</span><button onclick="document.getElementById('cm').style.display='none'">&#215;</button></div>
+    <textarea class="modal-ta" id="cm-ta"></textarea>
+  </div>
+</div>
+
+<!-- Batch Preview Modal (Sheets) -->
+<div id="batch-modal" class="modal-ov" style="display:none;">
+  <div class="modal-box" style="width:min(800px,95vw);">
+    <div class="modal-hd">
+      <span>Batch Preview <span id="bc-badge" style="font-size:11px;background:var(--acc-dim);color:var(--acc);border-radius:10px;padding:2px 8px;margin-left:6px;"></span></span>
+      <button onclick="document.getElementById('batch-modal').style.display='none'">&#215;</button>
+    </div>
+    <div class="batch-tabs">
+      <button class="batch-tab active" id="btab-table" onclick="setBatchTab('table')">Data Table</button>
+      <button class="batch-tab" id="btab-html" onclick="setBatchTab('html')">HTML View</button>
+    </div>
+    <div id="btv-table">
+      <div style="overflow-x:auto;max-height:320px;overflow-y:auto;">
+        <table class="batch-table">
+          <thead><tr><th>#</th><th>TITLE (click to edit)</th><th>FILENAME (click to edit)</th><th>REPLACEMENT (click to edit)</th></tr></thead>
+          <tbody id="batch-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div id="btv-html" style="display:none;">
+      <div class="batch-nav">
+        <button onclick="navRow(-1)">&#9664;</button>
+        <span style="font-size:12px;color:var(--tx);font-weight:600;" id="bnav-cur">1</span>
+        <span style="font-size:11px;color:var(--tx3);">of</span>
+        <span style="font-size:12px;color:var(--tx);" id="bnav-tot">1</span>
+        <button onclick="navRow(1)">&#9654;</button>
+        <span style="font-size:10px;color:var(--tx3);margin-left:6px;">ROW PREVIEW RESULT</span>
+      </div>
+      <div class="batch-html-box" id="batch-html-content"></div>
+    </div>
+    <div id="prog-section" style="display:none;">
+      <div style="font-size:11px;color:var(--tx3);margin-bottom:3px;" id="prog-label">Generating&#8230;</div>
+      <div class="prog-wrap"><div class="prog-bar" id="prog-bar" style="width:0%"></div></div>
+    </div>
+    <div class="modal-footer">
+      <button class="tbtn" onclick="dlHTML()">&#11015; Download HTML ZIP</button>
+      <button class="tbtn grn" onclick="dlPDF()">&#11015; Download PDF ZIP (.pdf)</button>
+      <span style="font-size:10px;color:var(--tx3);margin-left:auto;">Real binary PDF files, opens directly</span>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+'use strict';
+
+// ===================================================
+// STATE
+// ===================================================
+var curTool='numbers', curMode='plain', curSrc='sheets';
+var lastResult='', lastReps=[], lastResultIsHtml=false;
+var sheetRows=[], processedRows=[], batchNavRow=0;
+// Track if user has manually edited an output pane (so renderOut won't overwrite it)
+var outDirty={plain:false, seo:false, font:false};
+
+// ===================================================
+// THEME
+// ===================================================
+function setTheme(t){
+  var actual=t==='system'?(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):t;
+  document.documentElement.setAttribute('data-theme',actual);
+  document.querySelectorAll('.theme-opt').forEach(function(o){o.classList.toggle('sel',o.dataset.t===t);});
+  try{localStorage.setItem('trp_theme',t);}catch(e){}
+  document.getElementById('theme-dd').classList.remove('open');
+}
+function toggleThemeDD(){document.getElementById('theme-dd').classList.toggle('open');}
+document.addEventListener('click',function(e){if(!e.target.closest('.theme-wrap'))document.getElementById('theme-dd').classList.remove('open');});
+(function(){try{var t=localStorage.getItem('trp_theme')||'dark';setTheme(t);}catch(e){setTheme('dark');}})();
+
+// ===================================================
+// TOOL SWITCHING
+// ===================================================
+function setTool(t){
+  curTool=t;
+  document.getElementById('tt-n').classList.toggle('active',t==='numbers');
+  document.getElementById('tt-s').classList.toggle('active',t==='sheets');
+  document.getElementById('tt-p').classList.toggle('active',t==='pdf');
+  document.getElementById('num-panel').style.display=t==='numbers'?'block':'none';
+  document.getElementById('sheets-panel').style.display=t==='sheets'?'block':'none';
+  document.getElementById('pdf-panel').style.display=t==='pdf'?'block':'none';
+  if(t==='numbers'){document.getElementById('dc').textContent=document.getElementById('det-badge').textContent?document.getElementById('det-badge').textContent+' detected':'0 detected';}
+  else{document.getElementById('dc').textContent=sheetRows.length+' rows loaded';}
+}
+
+// ===================================================
+// SOURCE TABS (Sheets panel)
+// ===================================================
+function setSrc(t){
+  curSrc=t;
+  document.getElementById('src-sheets-div').style.display=t==='sheets'?'':'none';
+  document.getElementById('src-file-div').style.display=t==='file'?'':'none';
+  document.getElementById('st-sheets').classList.toggle('active',t==='sheets');
+  document.getElementById('st-file').classList.toggle('active',t==='file');
+}
+
+// ===================================================
+// GOOGLE SHEET LOADING - multiple strategies
+// ===================================================
+async function tryFetch(url){
+  var r=await fetch(url,{cache:'no-cache'});
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  return await r.text();
+}
+async function loadSheetData(){
+  var url=document.getElementById('sheet-url').value.trim();
+  var st=document.getElementById('ls-sheets');
+  if(!url){showSt(st,'Paste a URL first','err');return;}
+  showSt(st,'Loading\u2026','ok');
+  document.getElementById('load-btn-sheets').textContent='Loading\u2026';
+  document.getElementById('load-btn-sheets').disabled=true;
+
+  var sid='',gid='0';
+  var gm=url.match(/docs\.google\.com\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  if(gm){sid=gm[1];var gm2=url.match(/[?&#]gid=(\d+)/);if(gm2)gid=gm2[1];}
+
+  var candidates=[];
+  if(sid){
+    candidates.push({u:'https://docs.google.com/spreadsheets/d/'+sid+'/gviz/tq?tqx=out:csv&gid='+gid,json:false});
+    candidates.push({u:'https://docs.google.com/spreadsheets/d/'+sid+'/gviz/tq?tqx=out:json&gid='+gid,json:true});
+    candidates.push({u:'https://docs.google.com/spreadsheets/d/'+sid+'/export?format=csv&gid='+gid,json:false});
+  }
+  if(url.includes('format=csv')||url.includes('tqx=out')||url.endsWith('.csv')||!sid)
+    candidates.unshift({u:url,json:false});
+
+  var proxies=[
+    function(u){return u;},
+    function(u){return'https://corsproxy.io/?'+encodeURIComponent(u);},
+    function(u){return'https://api.allorigins.win/raw?url='+encodeURIComponent(u);},
+    function(u){return'https://thingproxy.freeboard.io/fetch/'+u;}
+  ];
+
+  var loaded=false;
+  loop:for(var ci=0;ci<candidates.length&&!loaded;ci++){
+    var cand=candidates[ci];
+    for(var pi=0;pi<proxies.length&&!loaded;pi++){
+      try{
+        var txt=await tryFetch(proxies[pi](cand.u));
+        if(!txt||txt.length<10)continue;
+        var rows=[];
+        if(cand.json){
+          var js=txt.replace(/^[^\(]+\(/,'').replace(/\);\s*$/,'');
+          try{
+            var obj=JSON.parse(js);
+            if(obj&&obj.table&&obj.table.rows){
+              rows=obj.table.rows.map(function(r){
+                var c=(r.c||[]).map(function(cell){return cell&&cell.v!=null?String(cell.v):'';});
+                return{title:(c[0]||'').trim(),filename:(c[1]||'').trim(),replacement:(c[2]||'').trim()};
+              }).filter(function(r){return r.title||r.filename;});
+            }
+          }catch(je){}
+        } else {
+          rows=parseCSV(txt);
+        }
+        if(rows.length){onSheetLoaded(rows,st);loaded=true;}
+      }catch(e){}
+    }
+  }
+  document.getElementById('load-btn-sheets').textContent='Load';
+  document.getElementById('load-btn-sheets').disabled=false;
+  if(!loaded){
+    showSt(st,'\u26a0 Could not load. Tip: In Google Sheets \u2192 File \u2192 Share \u2192 Publish to web \u2192 Comma-separated values (.csv) \u2192 copy URL and paste here. Or use the CSV File tab to upload directly.','err');
+  }
+}
+
+async function loadCsvFile(){
+  var fi=document.getElementById('csv-file'),st=document.getElementById('ls-file');
+  if(!fi.files.length){showSt(st,'Select a CSV file','err');return;}
+  var txt=await fi.files[0].text();
+  var rows=parseCSV(txt);
+  if(!rows.length){showSt(st,'No data found','err');return;}
+  onSheetLoaded(rows,st);
+}
+
+function parseCSV(text){
+  var lines=text.trim().split(/\r?\n/),rows=[];
+  for(var i=0;i<lines.length;i++){
+    var line=lines[i];if(!line.trim())continue;
+    var cells=[],cur='',inQ=false;
+    for(var j=0;j<line.length;j++){
+      var ch=line[j];
+      if(ch==='"'){inQ=!inQ;}
+      else if(ch===','&&!inQ){cells.push(cur.trim());cur='';}
+      else{cur+=ch;}
+    }
+    cells.push(cur.trim());
+    if(cells.length>=2)rows.push({title:(cells[0]||''),filename:(cells[1]||''),replacement:(cells[2]||'')});
+  }
+  return rows;
+}
+
+function onSheetLoaded(rows,st){
+  sheetRows=rows;
+  showSt(st,'\u2713 '+rows.length+' rows loaded','ok');
+  renderDataPreview();
+  var lines=rows.map(function(r){return r.title+' | '+r.filename+' | '+r.replacement;}).join('\n');
+  document.getElementById('manual-config').value=lines;
+  var rs=document.getElementById('rows-status');
+  rs.style.display='';rs.textContent='\u25cf '+rows.length+' rows loaded - replacing "'+(rows[0]?rows[0].replacement:'')+'"';
+  document.getElementById('dc').textContent=rows.length+' rows loaded';
+}
+function showSt(el,msg,cls){el.textContent=msg;el.className='load-status '+cls;}
+
+function renderDataPreview(){
+  var tbody=document.getElementById('ds-tbody');
+  tbody.innerHTML=sheetRows.slice(0,4).map(function(r){
+    return'<tr><td title="'+eh(r.title)+'">'+eh(r.title.slice(0,22))+(r.title.length>22?'...':'')+'</td><td>'+eh(r.filename.slice(0,16))+'</td><td>'+eh(r.replacement)+'</td></tr>';
+  }).join('');
+  document.getElementById('ds-preview').style.display='';
+  document.getElementById('ds-more').textContent=sheetRows.length>4?'+ '+(sheetRows.length-4)+' more rows':'';
+}
+
+// ===================================================
+// MANUAL CONFIG
+// ===================================================
+function parseManualConfig(){
+  var lines=document.getElementById('manual-config').value.trim().split('\n'),rows=[];
+  for(var i=0;i<lines.length;i++){
+    var line=lines[i];if(!line.trim())continue;
+    var parts=line.includes('|')?line.split('|'):line.split('\t');
+    if(parts.length>=2)rows.push({title:(parts[0]||'').trim(),filename:(parts[1]||'').trim(),replacement:(parts[2]||'').trim()});
+  }
+  if(rows.length){sheetRows=rows;document.getElementById('dc').textContent=rows.length+' rows';renderDataPreview();
+    var rs=document.getElementById('rows-status');rs.style.display='';rs.textContent='\u25cf '+rows.length+' rows loaded';}
+}
+
+// ===================================================
+// SHEETS PROCESS DATA
+// ===================================================
+function processData(){
+  var el=document.getElementById('ci');
+  var content=el.innerText||el.textContent||'';
+  if(!content.trim()){showSpill('\u26a0 Paste content first','warn');return;}
+  if(!sheetRows.length){showSpill('\u26a0 Load sheet data first','warn');return;}
+  var ph=document.getElementById('var-placeholder').value.trim();
+  processedRows=sheetRows.map(function(row){
+    var c=content;
+    c=c.replace(/\{\{Title\}\}/gi,row.title);
+    c=c.replace(/\{\{Filename\}\}/gi,row.filename);
+    c=c.replace(/\{\{Replacement\}\}/gi,row.replacement);
+    if(ph){var esc=ph.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');c=c.replace(new RegExp(esc,'g'),row.replacement);}
+    return Object.assign({},row,{content:c});
+  });
+  // Sheets mode: do NOT overwrite the editor output. Just prepare rows for download.
+  // lastResult and renderOut() are intentionally NOT called here.
+  showSpill('\u2713 '+processedRows.length+' docs ready \u2014 click \u2193 Download','ok');
+  document.getElementById('sb-msg').textContent='Processed '+processedRows.length+' docs \u2014 click Download';
+  document.getElementById('dc').textContent=processedRows.length+' rows loaded';
+}
+
+// ===================================================
+// OUTPUT MODE
+// ===================================================
+function setMode(m){
+  curMode=m;
+  ['plain','seo','creative','font'].forEach(function(x){
+    var e=document.getElementById('tab-'+x);if(e)e.classList.toggle('active',x===m);
+  });
+  var labels={plain:'Plain text',seo:'SEO Format',creative:'\u2728 Creative',font:'Font'};
+  document.getElementById('out-hd').textContent='Output \u2014 '+(labels[m]||m);
+  renderOut();
+}
+
+function renderOut(){
+  var plain=document.getElementById('out-plain');
+  var seo=document.getElementById('out-seo');
+  var cre=document.getElementById('out-cre');
+  var fnt=document.getElementById('out-font');
+
+  [plain,seo,cre,fnt].forEach(function(e){e.style.display='none';});
+
+  if(!lastResult){
+    plain.style.display='';
+    if(!outDirty.plain){
+      plain.innerHTML='<span style="color:var(--tx3);font-size:12px;">Output will appear here\u2026</span>';
+    }
+    plain.className='plain-out';
+    return;
+  }
+
+  if(curMode==='plain'){
+    plain.style.display='';plain.className='plain-out wp-ed';
+    if(!outDirty.plain){
+      if(lastResultIsHtml){
+        // HTML input: render the rich HTML directly, then highlight replaced numbers
+        var h=lastResult;
+        lastReps.forEach(function(r){
+          if(!r)return;
+          // Highlight only in text nodes (not inside tags)
+          var parts=h.split(/(<[^>]*>)/);
+          for(var i=0;i<parts.length;i++){
+            if(parts[i].startsWith('<'))continue;
+            parts[i]=parts[i].replace(new RegExp(escR(eh(r)),'g'),'<mark>'+eh(r)+'</mark>');
+          }
+          h=parts.join('');
+        });
+        plain.innerHTML=h;
+      } else {
+        var h2=eh(lastResult);
+        lastReps.forEach(function(r){if(r)h2=h2.replace(new RegExp(escR(eh(r)),'g'),'<mark>'+eh(r)+'</mark>');});
+        plain.innerHTML=h2;
+      }
+    }
+  } else if(curMode==='seo'){
+    seo.style.display='';
+    if(!outDirty.seo){
+      var plainText=lastResultIsHtml?htmlToPlainText(lastResult):lastResult;
+      seo.innerHTML=toSeoHtml(plainText);
+    }
+  } else if(curMode==='creative'){
+    cre.style.display='';
+    var plainText2=lastResultIsHtml?htmlToPlainText(lastResult):lastResult;
+    cre.innerHTML=toCreativeHtml(plainText2);
+  } else if(curMode==='font'){
+    fnt.style.display='';fnt.className='font-out wp-ed';
+    if(!outDirty.font){
+      if(lastResultIsHtml){
+        fnt.innerHTML=applyFontToHtml(lastResult);
+      } else {
+        var escaped3=eh(lastResult).replace(/\n/g,'<br>');
+        fnt.innerHTML=applyFontToHtml(escaped3);
+      }
+    }
+  }
+}
+
+// Convert HTML to plain text (for SEO/Font modes that need plain text)
+function htmlToPlainText(html){
+  var tmp=document.createElement('div');
+  tmp.innerHTML=html;
+  return tmp.innerText||tmp.textContent||'';
+}
+
+// Get current visible output element
+function getCurOutEl(){
+  if(curMode==='plain')return document.getElementById('out-plain');
+  if(curMode==='seo')return document.getElementById('out-seo');
+  if(curMode==='creative')return document.getElementById('out-cre');
+  if(curMode==='font')return document.getElementById('out-font');
+  return document.getElementById('out-plain');
+}
+
+// ===================================================
+// FONT STYLES (Font tab - numbers only, user-specified fonts)
+// The 13 exact font styles specified by user for digits 0-9
+// ===================================================
+var NUM_SETS=[
+  // 𝟎𝟏𝟐𝟑 bold
+  ['\uD835\uDFCE','\uD835\uDFCF','\uD835\uDFD0','\uD835\uDFD1','\uD835\uDFD2','\uD835\uDFD3','\uD835\uDFD4','\uD835\uDFD5','\uD835\uDFD6','\uD835\uDFD7'],
+  // 𝟚𝟙 double-struck
+  ['\uD835\uDFD8','\uD835\uDFD9','\uD835\uDFDA','\uD835\uDFDB','\uD835\uDFDC','\uD835\uDFDD','\uD835\uDFDE','\uD835\uDFDF','\uD835\uDFE0','\uD835\uDFE1'],
+  // 𝟮𝟭 sans-serif bold
+  ['\uD835\uDFEC','\uD835\uDFED','\uD835\uDFEE','\uD835\uDFEF','\uD835\uDFF0','\uD835\uDFF1','\uD835\uDFF2','\uD835\uDFF3','\uD835\uDFF4','\uD835\uDFF5'],
+  // 𝟸𝟷 monospace
+  ['\uD835\uDFF6','\uD835\uDFF7','\uD835\uDFF8','\uD835\uDFF9','\uD835\uDFFA','\uD835\uDFFB','\uD835\uDFFC','\uD835\uDFFD','\uD835\uDFFE','\uD835\uDFFF'],
+  // 𝟸𝟷 sans-serif (ᴀs style - using superscript-like)
+  ['\uD835\uDFE2','\uD835\uDFE3','\uD835\uDFE4','\uD835\uDFE5','\uD835\uDFE6','\uD835\uDFE7','\uD835\uDFE8','\uD835\uDFE9','\uD835\uDFEA','\uD835\uDFEB'],
+  // 21 standard (𝓪𝓼21 - plain digits for contrast)
+  ['0','1','2','3','4','5','6','7','8','9'],
+  // 𝟮𝟭 sans-serif bold (𝙖𝙨 style)
+  ['\uD835\uDFEC','\uD835\uDFED','\uD835\uDFEE','\uD835\uDFEF','\uD835\uDFF0','\uD835\uDFF1','\uD835\uDFF2','\uD835\uDFF3','\uD835\uDFF4','\uD835\uDFF5'],
+  // 𝟚𝟙 double-struck again (𝕒𝕤 style)
+  ['\uD835\uDFD8','\uD835\uDFD9','\uD835\uDFDA','\uD835\uDFDB','\uD835\uDFDC','\uD835\uDFDD','\uD835\uDFDE','\uD835\uDFDF','\uD835\uDFE0','\uD835\uDFE1'],
+  // plain 21 (𝒶𝓈 style)
+  ['0','1','2','3','4','5','6','7','8','9'],
+  // ᥲs21 - fullwidth
+  ['\uFF10','\uFF11','\uFF12','\uFF13','\uFF14','\uFF15','\uFF16','\uFF17','\uFF18','\uFF19'],
+  // 𝔞𝔰21 - fraktur style (using bold)
+  ['\uD835\uDFCE','\uD835\uDFCF','\uD835\uDFD0','\uD835\uDFD1','\uD835\uDFD2','\uD835\uDFD3','\uD835\uDFD4','\uD835\uDFD5','\uD835\uDFD6','\uD835\uDFD7'],
+  // αѕ21 - monospace
+  ['\uD835\uDFF6','\uD835\uDFF7','\uD835\uDFF8','\uD835\uDFF9','\uD835\uDFFA','\uD835\uDFFB','\uD835\uDFFC','\uD835\uDFFD','\uD835\uDFFE','\uD835\uDFFF'],
+  // ａｓ２１ - fullwidth
+  ['\uFF10','\uFF11','\uFF12','\uFF13','\uFF14','\uFF15','\uFF16','\uFF17','\uFF18','\uFF19']
+];
+// Apply font styling to digits while preserving full HTML structure (h1, h2, p, etc.)
+function applyFontToHtml(html){
+  var idx=0;
+  return html.replace(/(<[^>]*>)|([^<]+)/g,function(match,tag,text){
+    if(tag) return tag;
+    return text.replace(/\d+/g,function(num){
+      var set=NUM_SETS[idx%NUM_SETS.length];idx++;
+      return num.split('').map(function(c){var d=parseInt(c);return(d>=0&&d<=9)?(set[d]||c):c;}).join('');
+    });
+  });
+}
+function applyFontRaw(text){
+  var idx=0;
+  return text.replace(/\d+/g,function(match){
+    var set=NUM_SETS[idx%NUM_SETS.length];idx++;
+    return match.split('').map(function(c){var d=parseInt(c);return(d>=0&&d<=9)?(set[d]||c):c;}).join('');
+  });
+}
+function applyFontHtml(text){
+  var idx=0;
+  return eh(text).replace(/\d+/g,function(match){
+    var set=NUM_SETS[idx%NUM_SETS.length];idx++;
+    return match.split('').map(function(c){var d=parseInt(c);return(d>=0&&d<=9)?(set[d]||c):c;}).join('');
+  });
+}
+
+// ===================================================
+// SEO + CREATIVE FORMATTERS
+// ===================================================
+function cleanJ(t){return t.replace(/<[^>]{0,200}>/g,' ').replace(/\{\{+[^}]{0,100}\}+\}/g,' ').replace(/\{[^}]{0,40}\}/g,' ').replace(/[\r\n\t]+/g,' ').replace(/\s{2,}/g,' ').trim();}
+function safeSplit(text){
+  if(!text)return[];
+  var t=text.replace(/([¿¡])/g,'\x01$1');
+  t=t.replace(/([.!?]+["']?)\s+(?=[A-Z\u00C0-\u024F\x01\d"])/g,'$1\x01');
+  return t.split('\x01').map(function(s){return s.trim();}).filter(function(s){return s.length>4;});
+}
+function isQ(s){var t=s.trim();return/^[¿¡]/.test(t)||/\?\s*$/.test(t)||/^(¿|Cómo |Qué |Cuál |Cuándo |Dónde |Quién |Por qué |How |What |Which |When |Where |Who |Why )/i.test(t);}
+function isTitle(s){var t=s.trim();return t.length>=8&&t.length<=130&&!/\.\s*$/.test(t)&&!isQ(t)&&t.split(/\s+/).length<=18;}
+function toSeoHtml(text){
+  var cleaned=cleanJ(text);if(!cleaned)return'';
+  var sents=safeSplit(cleaned);if(!sents.length)return'<p>'+eh(cleaned)+'</p>';
+  var blocks=[],h1='',h1i=0;
+  for(var i=0;i<Math.min(4,sents.length);i++){if(isTitle(sents[i])){h1=sents[i].replace(/[.,;:!]$/,'').trim();h1i=i;break;}}
+  if(!h1){h1=sents[0].replace(/[.,;:!]$/,'').trim();h1i=0;}
+  // If sheets mode, use row title as H1
+  if(curTool==='sheets'&&processedRows.length&&processedRows[0]&&processedRows[0].title){
+    h1=processedRows[0].title;h1i=-1;
+  }
+  blocks.push('<h1>'+eh(h1)+'</h1>');
+  var rest=h1i>=0?sents.slice(h1i+1):sents;
+  if(!rest.length)return blocks.join('\n');
+  var sections=[],cur={heading:null,sents:[]};
+  for(var j=0;j<rest.length;j++){var s=rest[j];if(isQ(s)){if(cur.sents.length||cur.heading)sections.push(Object.assign({},cur));cur={heading:s.replace(/[.,;:!]$/,'').trim(),sents:[]};}else{cur.sents.push(s);}}
+  if(cur.sents.length||cur.heading)sections.push(cur);
+  if(!sections.length){for(var k=0;k<rest.length;k+=4){var p=rest.slice(k,k+4).join(' ').trim();if(p)blocks.push('<p>'+eh(p)+'</p>');}}
+  else{for(var m=0;m<sections.length;m++){var sec=sections[m];if(sec.heading)blocks.push('<h2>'+eh(sec.heading)+'</h2>');for(var n=0;n<sec.sents.length;n+=4){var pp=sec.sents.slice(n,n+4).join(' ').trim();if(pp)blocks.push('<p>'+eh(pp)+'</p>');}}}
+  return blocks.join('\n');
+}
+var CRE_COLORS=['cre-h2-blue','cre-h2-purple','cre-h2-teal','cre-h2-pink'];
+function toCreativeHtml(text){
+  var html=toSeoHtml(text);var h2i=0;
+  html=html.replace(/<h1>/g,'<div class="c-h1">').replace(/<\/h1>/g,'</div>');
+  html=html.replace(/<h2>/g,function(){var cls=CRE_COLORS[h2i%CRE_COLORS.length];h2i++;return'<div class="c-h2 '+cls+'">';}).replace(/<\/h2>/g,'</div>');
+  html=html.replace(/<p>/g,'<div class="c-p">').replace(/<\/p>/g,'</div>');
+  return html;
+}
+
+// ===================================================
+// WP EDITOR - FIND & REPLACE
+// ===================================================
+function execCmd(cmd){var el=getCurOutEl();if(el){el.focus();document.execCommand(cmd,false,null);}}
+function execFmt(tag){if(!tag)return;var el=getCurOutEl();if(el){el.focus();document.execCommand('formatBlock',false,tag);}}
+function insertLink(){var url=prompt('Enter URL:');if(url){var el=getCurOutEl();if(el){el.focus();document.execCommand('createLink',false,url);}}}
+
+function frFind(){
+  var find=document.getElementById('fr-find').value;if(!find)return;
+  var el=getCurOutEl();if(!el)return;
+  el.focus();
+  var text=el.innerText||el.textContent;
+  var count=(text.match(new RegExp(escR(find),'gi'))||[]).length;
+  document.getElementById('fr-count').textContent=count?count+' found':'Not found';
+  var html=el.innerHTML;
+  el.innerHTML=html.replace(new RegExp('('+escR(eh(find))+')', 'gi'),'<mark style="background:rgba(59,130,246,.3);color:var(--acc);">$1</mark>');
+}
+function frReplace(){
+  var find=document.getElementById('fr-find').value;
+  var repl=document.getElementById('fr-repl').value;
+  if(!find)return;
+  var el=getCurOutEl();if(!el)return;
+  var html=el.innerHTML;
+  html=html.replace(/<mark[^>]*>(.*?)<\/mark>/gi,'$1');
+  var count=0;
+  html=html.replace(new RegExp(escR(eh(find)),'gi'),function(){count++;return eh(repl);});
+  el.innerHTML=html;
+  document.getElementById('fr-count').textContent=count?count+' replaced':'Not found';
+}
+
+// ===================================================
+// NUMBER REPLACEMENT ENGINE (from original tool)
+// ===================================================
+var C2A={},C2F={},F2C={};
+[{n:'fullwidth',b:0xFF10},{n:'bold',b:0x1D7CE},{n:'double-struck',b:0x1D7D8},{n:'sans-serif',b:0x1D7E2},{n:'sans-serif-bold',b:0x1D7EC},{n:'monospace',b:0x1D7F6},{n:'arabic-indic',b:0x0660},{n:'ext-arabic',b:0x06F0},{n:'devanagari',b:0x0966},{n:'bengali',b:0x09E6},{n:'thai',b:0x0E50},{n:'myanmar',b:0x1040}].forEach(function(obj){
+  F2C[obj.n]=[];for(var i=0;i<10;i++){try{var c=String.fromCodePoint(obj.b+i);C2A[c]=String(i);C2F[c]=obj.n;F2C[obj.n].push(c);}catch(e){}}
+});
+[['sup','\u2070\u00B9\u00B2\u00B3\u2074\u2075\u2076\u2077\u2078\u2079'],['sub','\u2080\u2081\u2082\u2083\u2084\u2085\u2086\u2087\u2088\u2089']].forEach(function(arr){
+  var n=arr[0],cs=arr[1];F2C[n]=[];[...cs].forEach(function(c,i){C2A[c]=String(i);C2F[c]=n;F2C[n].push(c);});
+});
+var SM={};
+(function(){
+  var sep=[
+    '-','_','~','^','*','|','/','\\','>','<',':',';','=','@','#','!','?','&','[',']','{','}',
+    '\u2010','\u2011','\u2012','\u2013','\u2014','\u2015','\u2016','\u2017',
+    '\u2E17','\u2E1A','\u2E3A','\u2E3B','\u2E40','\u301C','\u3030',
+    '\uFE31','\uFE32','\uFE58','\uFE63','\uFF0D',
+    '\u2053','\uFF5E',
+    '\u00B7','\u2022','\u2023','\u2024','\u2025','\u2026','\u22C5','\u30FB','\uFF65',
+    '\u2027','\u2219','\u25E6','\u2043',
+    '\u2044','\u2215','\u29F5','\u29F8','\u29F9','\uFF0F',
+    '\u00D7','\u00F7','\u2212','\u2213','\u2214','\u00B1',
+    '\uFF0B','\u207A','\u208A','\u2795',
+    '\u2190','\u2191','\u2192','\u2193','\u2194','\u2195','\u2196','\u2197','\u2198','\u2199',
+    '\u21A0','\u21A3','\u21A6','\u21B0','\u21B3','\u21BA','\u21BB',
+    '\u21D0','\u21D1','\u21D2','\u21D3','\u21D4','\u21D5',
+    '\u21E6','\u21E7','\u21E8','\u21E9',
+    '\u2794','\u2799','\u279A','\u279B','\u279C','\u279D','\u279E','\u279F',
+    '\u27A0','\u27A1','\u27A2','\u27A3','\u27A4','\u27A5','\u27A6','\u27A7','\u27A8','\u27A9','\u27AA','\u27AB','\u27AC','\u27AD','\u27AE','\u27AF',
+    '\u27B0','\u27B1','\u27B2','\u27B3','\u27B4','\u27B5','\u27B6','\u27B7','\u27B8','\u27B9','\u27BA','\u27BB','\u27BC','\u27BD','\u27BE',
+    '\u2B00','\u2B01','\u2B02','\u2B03','\u2B04','\u2B05','\u2B06','\u2B07',
+    '\u2B95','\u2B9C','\u2B9D','\u2B9E','\u2B9F',
+    '\u2BA0','\u2BA1','\u2BA2','\u2BA3','\u2BA4','\u2BA5','\u2BA6','\u2BA7','\u2BA8','\u2BA9','\u2BAA','\u2BAB','\u2BAC','\u2BAD','\u2BAE','\u2BAF',
+    '\u27F0','\u27F1','\u27F2','\u27F3','\u27F4','\u27F5','\u27F6','\u27F7','\u27F8','\u27F9','\u27FA','\u27FB','\u27FC','\u27FD','\u27FE','\u27FF',
+    '\u2900','\u2901','\u2902','\u2903','\u2904','\u2905',
+    '\uFF01','\uFF02','\uFF03','\uFF05','\uFF06','\uFF07',
+    '\uFF0A','\uFF0C','\uFF0E','\uFF0F','\uFF1A','\uFF1B','\uFF1C','\uFF1D','\uFF1E','\uFF1F',
+    '\uFF20','\uFF3B','\uFF3C','\uFF3D','\uFF3E','\uFF3F','\uFF40','\uFF5B','\uFF5C','\uFF5D','\uFF5E',
+    '\u4E00','\u3001','\u3002','\uFF61','\uFF62','\uFF63','\uFF64',
+    '\u01C0','\u01C1','\u2223','\u2225','\u2502','\u2503','\u2758','\u2759','\u275A',
+    '\u2605','\u2606','\u25C6','\u25C7','\u25AA','\u25AB','\u25CF','\u25CB',
+    '\u2666','\u2665','\u2663','\u2660',
+    '\u00B0','\u3000'
+  ];
+  sep.forEach(function(c){SM[c]='-';});
+  ['\u00A0','\u200B','\u200C','\u200D','\uFEFF','\u2060','\u180E','\u00AD','\u034F'].forEach(function(c){SM[c]='';});
+  Object.assign(SM,{'\uFF08':'(','\uFF09':')','\uFF0E':'.','\uFF0B':'+','\uFE62':'+'});
+})();
+
+function norm(txt){
+  var n='';var m=[];var i=0;
+  while(i<txt.length){
+    var cp=txt.codePointAt(i);var ch=String.fromCodePoint(cp);var adv=ch.length;
+    if(C2A[ch]!==undefined){m.push(i);n+=C2A[ch];}
+    else if(SM[ch]!==undefined){var r=SM[ch];for(var k=0;k<r.length;k++){m.push(i);n+=r[k];}}
+    else{for(var k=0;k<adv;k++){m.push(i+k);n+=txt[i+k];}}
+    i+=adv;
+  }
+  return{normalized:n,idxMap:m};
+}
+var digs=function(s){return s.replace(/\D/g,'');};
+var isD=function(ch){return/\d/.test(ch)||C2A[ch]!==undefined;};
+function cpLen(s){var c=0,i=0;while(i<s.length){var cp=s.codePointAt(i);c++;i+=String.fromCodePoint(cp).length;}return c;}
+function analyzePhone(orig){
+  var toks=[];var cur='';var cD=null;var i=0;
+  while(i<orig.length){
+    var cp=orig.codePointAt(i);var ch=String.fromCodePoint(cp);var d=isD(ch);
+    if(cD===null){cur=ch;cD=d;}else if(d===cD){cur+=ch;}else{toks.push({t:cur,d:cD});cur=ch;cD=d;}
+    i+=ch.length;
+  }
+  if(cur)toks.push({t:cur,d:cD});
+  var pre='',segs=[],pend='',seen=false;
+  for(var tk of toks){if(!tk.d){if(!seen)pre+=tk.t;else pend+=tk.t;}else{seen=true;segs.push({sep:pend,digits:tk.t,cnt:cpLen(tk.t)});pend='';}}
+  return{pre,segs,trail:pend};
+}
+function fmtRep(rd,an){
+  var pre=an.pre,segs=an.segs,trail=an.trail;
+  if(!segs.length)return pre+rd+trail;
+  var out=pre,pos=0;
+  for(var i=0;i<segs.length;i++){
+    var s=segs[i];var take=i<segs.length-1?s.cnt:rd.length-pos;
+    var chunk=rd.slice(pos,pos+Math.max(take,0));
+    if(!chunk&&i>0)break;
+    out+=s.sep+chunk;pos+=take;
+  }
+  out+=trail;if(pos<rd.length)out+=rd.slice(pos);return out;
+}
+function detFont(s){
+  var c={};var i=0;
+  while(i<s.length){var cp=s.codePointAt(i);var ch=String.fromCodePoint(cp);var f=C2F[ch];if(f)c[f]=(c[f]||0)+1;i+=ch.length;}
+  var e=Object.entries(c);return e.length?e.sort(function(a,b){return b[1]-a[1];})[0][0]:null;
+}
+function toFontStr(s,fn){if(!fn||!F2C[fn])return s;var out='';for(var ch of s){if(ch>='0'&&ch<='9')out+=F2C[fn][+ch];else out+=ch;}return out;}
+
+// Extract per-digit font map from original number string
+// Returns array of font-name (or null) for each digit position found
+function getDigitFontMap(orig){
+  var map=[];var i=0;
+  while(i<orig.length){
+    var cp=orig.codePointAt(i);var ch=String.fromCodePoint(cp);
+    var ascii=C2A[ch];
+    if(ascii!==undefined){
+      // this char is a digit (possibly fancy)
+      map.push(C2F[ch]||null);
+    } else if(ch>='0'&&ch<='9'){
+      map.push(null); // plain ascii digit
+    }
+    i+=ch.length;
+  }
+  return map;
+}
+
+// Apply per-digit font map to a plain-digit string
+// fontMap[i] = font name for digit i (cycles if replacement is longer)
+function applyDigitFontMap(plainStr, fontMap){
+  if(!fontMap||!fontMap.length)return plainStr;
+  var out='';var di=0;
+  for(var ci=0;ci<plainStr.length;ci++){
+    var ch=plainStr[ci];
+    if(ch>='0'&&ch<='9'){
+      var fn=fontMap[di%fontMap.length];
+      if(fn&&F2C[fn]){out+=F2C[fn][+ch];}
+      else{out+=ch;}
+      di++;
+    } else {
+      out+=ch;
+    }
+  }
+  return out;
+}
+
+function buildRep(original,repValue){
+  var origFont=detFont(original);
+  var digitFontMap=getDigitFontMap(original);
+  var hasMixedFonts=digitFontMap.length>0&&(new Set(digitFontMap)).size>1;
+  var parts=repValue.split(',').map(function(p){return p.trim();}).filter(Boolean);
+  if(!parts.length)return original;
+  var analysis=analyzePhone(original);
+  var repOuts=parts.map(function(rep){
+    var repFont=detFont(rep);
+
+    // Mirror original's separator pattern
+    var rd2=rep.replace(/\D/g,'');
+    var formatted2=fmtRep(rd2,analysis);
+    if(repFont){
+      return toFontStr(formatted2,repFont);
+    } else if(hasMixedFonts){
+      return applyDigitFontMap(formatted2,digitFontMap);
+    } else if(origFont){
+      return toFontStr(formatted2,origFont);
+    } else {
+      return formatted2;
+    }
+  });
+  return repOuts.join(' o ');
+}
+
+var NUMRE=/\+?[\uFF08\u300C(]?\d(?:[^\da-zA-Z\u00C0-\u024F\u0400-\u04FF\u4E00-\u9FFF\n\r]{0,4}\d){5,14}/g;
+function mkSpan(orig,iMap,ns,ne){
+  if(ns<0||ne>iMap.length)return null;
+  var os=iMap[ns],lo=iMap[ne-1],cp2=orig.codePointAt(lo),oe=lo+String.fromCodePoint(cp2).length;
+  var o=orig.slice(os,oe);
+  var suffix='',endIdx=oe;
+  var afterRe=/^(\s*[\(\[\u300C]?[A-Za-z]{1,6}[\)\]\u300D]?)/;
+  var after=orig.slice(oe,oe+12);
+  var am=afterRe.exec(after);
+  if(am&&am[1].trim().length>0&&/[A-Za-z]/.test(am[1])){suffix=am[1];endIdx=oe+am[1].length;}
+  var nd=digs(norm(o).normalized);
+  if(nd.length<7||nd.length>15)return null;
+  return{original:o,suffix:suffix,normDigits:nd,start:os,end:endIdx};
+}
+function isDupe(sp,s){
+  return sp.some(function(x){
+    // Two spans are dupes only if same start AND end AND same rawOnly status
+    return x.start===s.start&&x.end===s.end&&(!x.rawOnly===!s.rawOnly);
+  });
+}
+function stdSpans(orig){
+  var r=norm(orig),n=r.normalized,m=r.idxMap;
+  var nr=n.replace(/\u300C/g,'(').replace(/\u300D/g,')');
+  var sp=[];NUMRE.lastIndex=0;var x;
+  while((x=NUMRE.exec(nr))!==null){var s=mkSpan(orig,m,x.index,x.index+x[0].length);if(s&&!isDupe(sp,s))sp.push(s);}
+  return sp;
+}
+function custSpans(orig,pat){
+  if(!pat||!pat.trim())return[];
+  var sp=[];
+
+  // Strategy 1: normalized match (original approach, works for simple numbers)
+  var normResult=norm(orig);
+  var nt=normResult.normalized,m=normResult.idxMap;
+  var np=norm(pat).normalized;
+  if(np.trim()){
+    var f=0;
+    while(true){
+      var fd=nt.indexOf(np,f);if(fd===-1)break;
+      var ne=fd+np.length;
+      if(ne<=m.length){
+        var s=mkSpan(orig,m,fd,ne);
+        if(s){sp.push(s);}
+        else{
+          // mkSpan rejected (digit count) — raw span via index map
+          var os=m[fd];
+          var lo=m[ne-1];
+          var cp2=orig.codePointAt(lo);
+          var oe=lo+String.fromCodePoint(cp2).length;
+          var rawOrig=orig.slice(os,oe);
+          if(!sp.some(function(x){return x.start===os&&x.end===oe;}))
+            sp.push({original:rawOrig,suffix:'',normDigits:'RAW_'+os,start:os,end:oe,rawOnly:true});
+        }
+      }
+      f=fd+1;
+    }
+  }
+
+  // Strategy 2: direct literal search in original text
+  // Catches patterns with special chars (arrows, symbols) that norm() doesn't translate
+  var idx=orig.indexOf(pat);
+  while(idx!==-1){
+    var endIdx=idx+pat.length;
+    var alreadyCovered=sp.some(function(x){return x.start<=idx&&x.end>=endIdx;});
+    if(!alreadyCovered){
+      var chunk=orig.slice(idx,endIdx);
+      var nd=digs(norm(chunk).normalized);
+      // Try mkSpan via a temp norm of just the chunk
+      var chunkNorm=norm(chunk);
+      var s2=null;
+      // Build a fake iMap that maps normalized positions back to idx+offset
+      if(chunkNorm.idxMap.length>0){
+        var fakeMap=chunkNorm.idxMap.map(function(off){return idx+off;});
+        s2=mkSpan(orig,fakeMap,0,chunkNorm.idxMap.length);
+      }
+      if(s2){
+        if(!sp.some(function(x){return x.start===s2.start&&x.end===s2.end;}))sp.push(s2);
+      } else {
+        // Digit count out of range OR no digits — create rawOnly span for deletion
+        sp.push({original:chunk,suffix:'',normDigits:'RAW_'+idx,start:idx,end:endIdx,rawOnly:true});
+      }
+    }
+    idx=orig.indexOf(pat,idx+1);
+  }
+
+  return sp;
+}
+function allSpans(orig,pats){
+  var sp=stdSpans(orig);
+  if(pats)pats.forEach(function(p){custSpans(orig,p).forEach(function(s){if(!isDupe(sp,s))sp.push(s);});});
+  sp.sort(function(a,b){return a.start-b.start;});return sp;
+}
+// allSpans but include rawOnly spans only when needed for deletion
+function allSpansForDelete(orig,pats){
+  return allSpans(orig,pats); // rawOnly spans are now included
+}
+function uniqD(sp){
+  // exclude rawOnly from the detected list display
+  var filtered=sp.filter(function(x){return!x.rawOnly;});
+  var s=new Set();return filtered.filter(function(x){return s.has(x.normDigits)?false:(s.add(x.normDigits),true);});
+}
+
+function getMaps(){
+  return [...document.querySelectorAll('.map-row')].map(function(r){
+    var ins=r.querySelectorAll('input[type=text]');
+    return{find:ins[0].value.trim(),replace:ins[1].value.trim()};
+  }).filter(function(m){return m.replace;});
+}
+function getPats(){return [...document.querySelectorAll('.pat-input')].map(function(i){return i.value.trim();}).filter(Boolean);}
+
+function resolveRep(span,maps){
+  var no=norm(span.original).normalized;
+  for(var m of maps){
+    if(!m.find)continue;
+    var nf=norm(m.find).normalized;
+    var od=digs(no),fd=digs(nf);
+    if(fd&&od.startsWith(fd))return m.replace;
+    if(nf&&no.replace(/\s/g,'').startsWith(nf.replace(/\s/g,'')))return m.replace;
+  }
+  var ca=maps.find(function(m){return!m.find;});return ca?ca.replace:null;
+}
+
+function savePats(){try{localStorage.setItem('trp_pats',JSON.stringify(getPats()));}catch(e){}updPB();}
+function loadPats(){try{var s=localStorage.getItem('trp_pats');if(s)JSON.parse(s).forEach(function(p){if(p)addPatRow(p,false);});}catch(e){}updPB();}
+function saveMaps(){
+  var maps=getMaps();
+  try{localStorage.setItem('trp_maps',JSON.stringify(maps));}catch(e){}
+  var _db=window.db;
+  if(_db){try{var _su=(typeof window.getSessionUser==='function'?window.getSessionUser():null)||'user';_db.ref('tool_data/number_mappings').set({maps:maps,updated:Date.now(),updatedBy:_su});}catch(e){}}
+}
+function loadMaps(){
+  var _db=window.db;
+  if(_db){
+    _db.ref('tool_data/number_mappings/maps').once('value').then(function(snap){
+      var ms=snap.val();
+      if(ms&&ms.length){ms.forEach(function(x){addMapRow(x.find,x.replace,false);});try{localStorage.setItem('trp_maps',JSON.stringify(ms));}catch(e){}return;}
+      _loadMapsLocal();
+    }).catch(function(){_loadMapsLocal();});
+  } else { _loadMapsLocal(); }
+}
+function _loadMapsLocal(){
+  try{var s=localStorage.getItem('trp_maps');if(s){var ms=JSON.parse(s);if(ms.length){ms.forEach(function(x){addMapRow(x.find,x.replace,false);});return;}}}catch(e){}
+  addMapRow('+1','',false);addMapRow('+52','',false);addMapRow('','',false);
+}
+function updPB(){
+  var n=getPats().length;
+  document.getElementById('pat-dot').textContent=n?'\uD83D\uDCBE'+n:'';
+  document.getElementById('sb-r').textContent=n?n+' pattern'+(n>1?'s':'')+' saved':'';
+}
+
+function getChecked(){return [...document.querySelectorAll('.det-cb')].filter(function(c){return c.checked;}).map(function(c){return c.dataset.d;});}
+function applyRep(txt,selD,maps,pats){
+  var ks=new Set(selD);
+  var allSp=allSpans(txt,pats);
+
+  // Only process selected normal spans that have a mapping
+  var normalSpans=allSp.filter(function(s){return!s.rawOnly&&ks.has(s.normDigits);});
+  var matched=normalSpans.filter(function(s){return resolveRep(s,maps);});
+
+  // Remove duplicates by position
+  var seen=new Set();
+  matched=matched.filter(function(s){
+    var k=s.start+':'+s.end;if(seen.has(k))return false;seen.add(k);return true;
+  });
+
+  if(!matched.length)return{result:txt,count:0,repStrings:[],deleted:0};
+
+  // Sort descending so we can splice from end without shifting earlier positions
+  matched.sort(function(a,b){return b.start-a.start;});
+
+  var result=txt,count=0;var rs=new Set();
+  for(var sp of matched){
+    var rep=resolveRep(sp,maps);
+    var ro=buildRep(sp.original,rep);
+    rs.add(ro.split(' o ')[0]);
+    result=result.slice(0,sp.start)+ro+(sp.suffix||'')+result.slice(sp.end);
+    count++;
+  }
+  return{result,count,repStrings:[...rs],deleted:0};
+}
+
+function doReplace(){
+  var el=document.getElementById('ci');
+  var inputHtml=el.innerHTML;
+  var txt=el.innerText||el.textContent||'';
+  var maps=getMaps(),pats=getPats(),checked=getChecked();
+  if(!txt.trim()){showSpill('\u26a0 Paste content first','warn');return;}
+  if(!maps.length){showSpill('\u26a0 Add a replacement mapping','warn');return;}
+  if(!checked.length){showSpill('\u26a0 No numbers selected','warn');return;}
+
+  // Apply replacements on plain text first to get the rep strings
+  var r=applyRep(txt,checked,maps,pats);
+  lastReps=r.repStrings;
+
+  // Now apply replacements directly in the HTML string (outside of tags)
+  // We replace number occurrences in text nodes only (between > and <)
+  var resultHtml=applyRepInHtml(inputHtml,checked,maps,pats);
+  lastResult=resultHtml;
+  lastResultIsHtml=true;
+  outDirty={plain:false,seo:false,font:false}; // fresh process resets dirty state
+  renderOut();
+  var msg='\u2713 '+r.count+' replaced';
+  showSpill(msg,'ok');
+  document.getElementById('sb-msg').textContent='Replaced '+r.count+' number'+(r.count!==1?'s':'');
+}
+
+// Apply number replacements inside HTML text nodes only (not inside tag attributes)
+function applyRepInHtml(html, selD, maps, pats){
+  // Split HTML into text segments (outside tags) and tag segments (inside <>)
+  // Then only process text segments
+  var parts=html.split(/(<[^>]*>)/);
+  var ks=new Set(selD);
+  for(var i=0;i<parts.length;i++){
+    if(parts[i].startsWith('<'))continue; // skip tags
+    // Decode HTML entities in text for processing
+    var decoded=parts[i].replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&nbsp;/g,'\u00a0').replace(/&#(\d+);/g,function(_,n){return String.fromCharCode(+n);});
+    var sp=allSpans(decoded,pats);
+    var normalSpans=sp.filter(function(s){return!s.rawOnly&&ks.has(s.normDigits);});
+    var matched=normalSpans.filter(function(s){return resolveRep(s,maps);});
+    var seen=new Set();
+    matched=matched.filter(function(s){var k=s.start+':'+s.end;if(seen.has(k))return false;seen.add(k);return true;});
+    if(!matched.length)continue;
+    matched.sort(function(a,b){return b.start-a.start;});
+    var result=decoded;
+    for(var sp2 of matched){
+      var rep=resolveRep(sp2,maps);
+      var ro=buildRep(sp2.original,rep);
+      result=result.slice(0,sp2.start)+ro+(sp2.suffix||'')+result.slice(sp2.end);
+    }
+    // Re-encode for HTML
+    parts[i]=result.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  return parts.join('');
+}
+
+// ===================================================
+// REMOVE UNHIGHLIGHTED DIGITS FROM OUTPUT
+// Uses the rendered <mark> elements (green highlights) to know which digit
+// sequences to protect, then removes ALL other digits from lastResult
+// while keeping every non-digit character (spaces, newlines, symbols) intact.
+// ===================================================
+function doRemoveUnhighlightedDigits(){
+  if(!lastResult){showSpill('⚠ Process first, then use this button','warn');return;}
+
+  var outEl=document.getElementById('out-plain');
+  if(!outEl){showSpill('⚠ Switch to Plain mode first','warn');return;}
+
+  // Step 1: collect exact text of every green <mark> in the rendered output
+  var markedTexts=new Set();
+  outEl.querySelectorAll('mark').forEach(function(m){
+    var t=(m.textContent||'').trim();
+    if(t)markedTexts.add(t);
+  });
+  // Always protect 24 and 24/7 from deletion
+  markedTexts.add('24');
+  markedTexts.add('24/7');
+
+  // Helper: remove unhighlighted digits from a plain text string
+  function stripUnprotected(text, protectedSet){
+    // Build protected ranges from the set of protected strings
+    var protectedRanges=[];
+    protectedSet.forEach(function(needle){
+      var idx=0;
+      while(true){
+        var pos=text.indexOf(needle,idx);
+        if(pos===-1)break;
+        protectedRanges.push({start:pos,end:pos+needle.length});
+        idx=pos+needle.length;
+      }
+    });
+    protectedRanges.sort(function(a,b){return a.start-b.start;});
+
+    var result='';var removedCount=0;var pi=0;var i=0;
+    while(i<text.length){
+      while(pi<protectedRanges.length&&protectedRanges[pi].end<=i)pi++;
+      var inProtected=pi<protectedRanges.length&&i>=protectedRanges[pi].start&&i<protectedRanges[pi].end;
+      var cp=text.codePointAt(i);var ch=String.fromCodePoint(cp);var charLen=ch.length;
+      var isDigitChar=(ch>='0'&&ch<='9')||C2A[ch]!==undefined;
+      if(isDigitChar&&!inProtected){removedCount++;}
+      else{result+=ch;}
+      i+=charLen;
+    }
+    return{result,removedCount};
+  }
+
+  var totalRemoved=0;
+
+  if(lastResultIsHtml){
+    // Process text nodes only (outside of HTML tags)
+    var parts=lastResult.split(/(<[^>]*>)/);
+    for(var i=0;i<parts.length;i++){
+      if(parts[i].startsWith('<'))continue;
+      // Decode HTML entities before stripping
+      var decoded=parts[i].replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&nbsp;/g,'\u00a0');
+      var stripped=stripUnprotected(decoded,markedTexts);
+      totalRemoved+=stripped.removedCount;
+      // Re-encode
+      parts[i]=stripped.result.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+    lastResult=parts.join('');
+  } else {
+    var stripped2=stripUnprotected(lastResult,markedTexts);
+    totalRemoved=stripped2.removedCount;
+    lastResult=stripped2.result;
+  }
+
+  if(totalRemoved===0){
+    showSpill('✓ No unhighlighted digits to remove','ok');
+    return;
+  }
+
+  renderOut();
+  showSpill('✓ Removed '+totalRemoved+' unhighlighted digit'+(totalRemoved!==1?'s':''),'ok');
+  document.getElementById('sb-msg').textContent='Removed '+totalRemoved+' unhighlighted digit'+(totalRemoved!==1?'s':'')+' from output';
+}
+function updateAll(){
+  var el=document.getElementById('ci');
+  var txt=el.innerText||el.textContent||'';
+  var maps=getMaps(),pats=getPats(),dl=document.getElementById('det-list');
+  var wc=txt.trim()?txt.trim().split(/\s+/).length:0;
+  document.getElementById('wc').textContent=wc+' words';
+  if(!txt.trim()){
+    dl.innerHTML='<div style="color:var(--tx3);font-size:11px;">Paste content to detect\u2026</div>';
+    document.getElementById('det-badge').textContent='';
+    document.getElementById('dc').textContent='0 detected';
+    return;
+  }
+  var spans=allSpans(txt,pats);
+  var uniq=uniqD(spans); // normal (non-rawOnly) unique spans
+  // collect unique rawOnly spans too
+  var rawSpans=[];var rawSeen=new Set();
+  spans.filter(function(s){return s.rawOnly;}).forEach(function(s){
+    if(!rawSeen.has(s.original)){rawSeen.add(s.original);rawSpans.push(s);}
+  });
+  var totalCount=uniq.length+rawSpans.length;
+  document.getElementById('det-badge').textContent=totalCount||'';
+  document.getElementById('dc').textContent=(totalCount||0)+' detected';
+  if(!totalCount){dl.innerHTML='<div style="color:var(--tx3);font-size:11px;">No numbers found. Try custom patterns.</div>';return;}
+  var normalItems=uniq.map(function(s,i){
+    var font=detFont(s.original);
+    var fTag=font?'<div class="det-t">'+font+'</div>':'';
+    var rep=resolveRep(s,maps);
+    var rTag=rep
+      ?'<div class="det-r">\u2192 '+eh(buildRep(s.original,rep))+(s.suffix?'<span style="color:var(--tx3)">'+eh(s.suffix)+'</span>':'')+'</div>'
+      :'<div class="det-w">\u26a0 No mapping</div>';
+    return'<div class="det-item on" id="di'+i+'" onclick="togI('+i+')"><input type="checkbox" class="det-cb" id="dc'+i+'" checked onclick="event.stopPropagation();" onchange="togI('+i+')" data-d="'+eh(s.normDigits)+'"/><div class="det-nfo"><div class="det-o">'+eh(s.original)+(s.suffix?'<span style="color:var(--tx3);font-size:10px;">'+eh(s.suffix)+'</span>':'')+'</div>'+fTag+rTag+'</div></div>';
+  });
+  var rawItems=rawSpans.map(function(s,ri){
+    var delTag='<div style="font-size:10px;color:var(--tx3);">\u2699 Custom pattern only</div>';
+    return'<div class="det-item" style="opacity:.7;border-color:rgba(239,68,68,.2);" id="dir'+ri+'"><div style="width:13px;flex-shrink:0;"></div><div class="det-nfo"><div class="det-o" style="color:var(--tx2);">'+eh(s.original)+'</div>'+delTag+'</div></div>';
+  });
+  dl.innerHTML=normalItems.concat(rawItems).join('');
+}
+function togI(i){var cb=document.getElementById('dc'+i),it=document.getElementById('di'+i);if(!cb||!it)return;cb.checked=!cb.checked;it.classList.toggle('on',cb.checked);}
+function selAll(v){document.querySelectorAll('.det-cb').forEach(function(cb){cb.checked=v;var it=document.getElementById(cb.id.replace('dc','di'));if(it)it.classList.toggle('on',v);});}
+
+// INPUT HANDLER
+function onInput(){
+  var el=document.getElementById('ci');
+  var ph=document.getElementById('ci-placeholder');
+  var isEmpty=!el.innerHTML||el.innerHTML==='<br>'||el.textContent.trim()==='';
+  if(ph)ph.style.display=isEmpty?'':'none';
+  var txt=el.innerText||el.textContent||'';
+  var wc=txt.trim()?txt.trim().split(/\s+/).length:0;
+  document.getElementById('wc').textContent=wc+' words';
+  if(curTool==='numbers')updateAll();
+}
+
+// ===================================================
+// MAP + PATTERN ROW BUILDERS
+// ===================================================
+var mId=0;
+function addMapRow(fv,rv,save){
+  fv=fv||'';rv=rv||'';if(save===undefined)save=true;
+  var id=++mId;
+  var row=document.createElement('div');row.className='map-row';row.id='map-'+id;
+  row.innerHTML='<button class="map-del" onclick="delEl(\'map-'+id+'\',true)">\u00D7</button>'
+    +'<div class="map-ins">'
+    +'<input type="text" class="map-inp-sm" placeholder="+1" value="'+eh(fv)+'" oninput="updateAll();saveMaps();"/>'
+    +'<span style="color:var(--tx3);font-size:11px;flex-shrink:0;">\u2192</span>'
+    +'<input type="text" class="map-inp-lg" placeholder="Number(s), comma-sep." value="'+eh(rv)+'" oninput="updateAll();saveMaps();"/>'
+    +'</div>'
+    +'<div class="map-pv" id="mp-'+id+'"></div>';
+  document.getElementById('map-rows').appendChild(row);
+  if(save)saveMaps();updateAll();
+}
+var pId=0;
+function addPatRow(v,save){
+  v=v||'';if(save===undefined)save=true;
+  var id=++pId;
+  var div=document.createElement('div');div.className='pat-row';div.id='pat-'+id;
+  div.innerHTML='<input class="pat-input" type="text" placeholder="Paste exact undetected number" value="'+eh(v)+'" oninput="updateAll();savePats();"/><button class="pat-del" onclick="delEl(\'pat-'+id+'\',true)">\u00D7</button>';
+  document.getElementById('pat-rows').appendChild(div);
+  if(save)savePats();updateAll();
+}
+function delEl(id,save){
+  var el=document.getElementById(id);if(el)el.remove();
+  if(save){saveMaps();savePats();}updateAll();
+}
+function doClear(){
+  lastResult='';lastReps=[];lastResultIsHtml=false;processedRows=[];
+  var el=document.getElementById('ci');
+  el.innerHTML='';
+  var ph=document.getElementById('ci-placeholder');
+  if(ph)ph.style.display='';
+  renderOut();
+  document.getElementById('sb-msg').textContent='Ready';
+  updateAll();
+  showSpill('Reset','ok');
+}
+function resetSheets(){
+  sheetRows=[];processedRows=[];lastResult='';lastReps=[];lastResultIsHtml=false;
+  var el=document.getElementById('ci');el.innerHTML='';
+  var ph=document.getElementById('ci-placeholder');if(ph)ph.style.display='';
+  document.getElementById('manual-config').value='';
+  document.getElementById('var-placeholder').value='';
+  document.getElementById('sheet-url').value='';
+  document.getElementById('ds-preview').style.display='none';
+  document.getElementById('rows-status').style.display='none';
+  document.getElementById('dc').textContent='0 rows loaded';
+  document.getElementById('wc').textContent='0 words';
+  renderOut();
+  showSpill('Reset','ok');
+}
+
+// ===================================================
+// DOWNLOAD HANDLER
+// ===================================================
+function onDownload(){
+  if(curTool==='numbers'){
+    if(!lastResult){showSpill('\u26a0 Process first','warn');return;}
+    var name=prompt('Filename (without extension):','output')||'output';
+    var content=lastResultIsHtml?htmlToPlainText(lastResult):lastResult;
+    var fakeRow={content:content,title:name,filename:name,replacement:''};
+    try{
+      var buf=drawPdf(fakeRow,curMode);
+      triggerDl(new Blob([buf],{type:'application/pdf'}),name+'.pdf');
+      showSpill('\u2713 PDF downloaded!','ok');
+    }catch(e){
+      triggerDl(new Blob([buildPrintableHtml(fakeRow,curMode)],{type:'text/html'}),name+'.html');
+      showSpill('\u2713 Downloaded as HTML','warn');
+    }
+  } else {
+    showBatchPreview();
+  }
+}
+
+// ===================================================
+// BATCH PREVIEW + DOWNLOAD (Sheets)
+// ===================================================
+function showBatchPreview(){
+  if(!processedRows.length){showSpill('\u26a0 Process data first','warn');return;}
+  batchNavRow=0;
+  document.getElementById('bc-badge').textContent=processedRows.length+' rows';
+  renderBatchTable();renderBatchHtmlView();setBatchTab('table');
+  document.getElementById('batch-modal').style.display='flex';
+}
+function setBatchTab(t){
+  document.getElementById('btab-table').classList.toggle('active',t==='table');
+  document.getElementById('btab-html').classList.toggle('active',t==='html');
+  document.getElementById('btv-table').style.display=t==='table'?'block':'none';
+  document.getElementById('btv-html').style.display=t==='html'?'block':'none';
+}
+function renderBatchTable(){
+  var tbody=document.getElementById('batch-tbody');
+  tbody.innerHTML=processedRows.map(function(r,i){
+    return'<tr data-idx="'+i+'">'
+      +'<td style="color:var(--tx3);font-size:10px;text-align:center;">'+(i+1)+'</td>'
+      +'<td><input class="batch-edit" value="'+eh(r.title)+'" onchange="updateRow('+i+',\'title\',this.value)" oninput="updateRow('+i+',\'title\',this.value)" title="Edit title"/></td>'
+      +'<td><input class="batch-edit fn" value="'+eh(r.filename)+'" onchange="updateRow('+i+',\'filename\',this.value)" oninput="updateRow('+i+',\'filename\',this.value)" title="Edit filename"/></td>'
+      +'<td><input class="batch-edit" value="'+eh(r.replacement)+'" onchange="updateRow('+i+',\'replacement\',this.value)" oninput="updateRow('+i+',\'replacement\',this.value)" title="Edit replacement"/></td>'
+      +'</tr>';
+  }).join('');
+}
+function updateRow(i, field, val){
+  if(!processedRows[i]) return;
+  processedRows[i][field] = val;
+
+  // When replacement changes, re-generate the content for this row
+  // so the PDF gets the updated airline name, not the stale original
+  if(field === 'replacement'){
+    var originalInput = document.getElementById('ci').value;
+    var ph = document.getElementById('var-placeholder').value.trim();
+    var row = processedRows[i];
+    var c = originalInput;
+    // Re-apply template variables with updated replacement
+    c = c.replace(/\{\{Title\}\}/gi, row.title);
+    c = c.replace(/\{\{Filename\}\}/gi, row.filename);
+    c = c.replace(/\{\{Replacement\}\}/gi, val);
+    if(ph){
+      var esc = ph.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+      c = c.replace(new RegExp(esc,'g'), val);
+    }
+    processedRows[i].content = c;
+  }
+
+  // If title changes, update content that uses {{Title}} too
+  if(field === 'title'){
+    var originalInput2 = document.getElementById('ci').value;
+    var ph2 = document.getElementById('var-placeholder').value.trim();
+    var row2 = processedRows[i];
+    var c2 = originalInput2;
+    c2 = c2.replace(/\{\{Title\}\}/gi, val);
+    c2 = c2.replace(/\{\{Filename\}\}/gi, row2.filename);
+    c2 = c2.replace(/\{\{Replacement\}\}/gi, row2.replacement);
+    if(ph2){
+      var esc2 = ph2.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+      c2 = c2.replace(new RegExp(esc2,'g'), row2.replacement);
+    }
+    processedRows[i].content = c2;
+  }
+}
+function renderBatchHtmlView(){
+  var row=processedRows[batchNavRow];if(!row)return;
+  document.getElementById('bnav-cur').textContent=batchNavRow+1;
+  document.getElementById('bnav-tot').textContent=processedRows.length;
+  // Show formatted content (using current mode format)
+  var html=getRowHtml(row);
+  document.getElementById('batch-html-content').innerHTML=html;
+}
+function navRow(dir){batchNavRow=Math.max(0,Math.min(processedRows.length-1,batchNavRow+dir));renderBatchHtmlView();}
+
+// =====================================================
+// PDF GENERATION — Pure jsPDF text renderer
+// No html2canvas, no screenshots, no unicode corruption
+// Handles all Spanish chars, phone numbers, emojis safely
+// =====================================================
+
+// Strip unicode surrogates / special font chars back to plain digits for PDF
+function stripFontChars(text){
+  // Map unicode math digits back to plain 0-9
+  var map={
+    '\uD835\uDFCE':'0','\uD835\uDFCF':'1','\uD835\uDFD0':'2','\uD835\uDFD1':'3','\uD835\uDFD2':'4',
+    '\uD835\uDFD3':'5','\uD835\uDFD4':'6','\uD835\uDFD5':'7','\uD835\uDFD6':'8','\uD835\uDFD7':'9',
+    '\uD835\uDFD8':'0','\uD835\uDFD9':'1','\uD835\uDFDA':'2','\uD835\uDFDB':'3','\uD835\uDFDC':'4',
+    '\uD835\uDFDD':'5','\uD835\uDFDE':'6','\uD835\uDFDF':'7','\uD835\uDFE0':'8','\uD835\uDFE1':'9',
+    '\uD835\uDFE2':'0','\uD835\uDFE3':'1','\uD835\uDFE4':'2','\uD835\uDFE5':'3','\uD835\uDFE6':'4',
+    '\uD835\uDFE7':'5','\uD835\uDFE8':'6','\uD835\uDFE9':'7','\uD835\uDFEA':'8','\uD835\uDFEB':'9',
+    '\uD835\uDFEC':'0','\uD835\uDFED':'1','\uD835\uDFEE':'2','\uD835\uDFEF':'3','\uD835\uDFF0':'4',
+    '\uD835\uDFF1':'5','\uD835\uDFF2':'6','\uD835\uDFF3':'7','\uD835\uDFF4':'8','\uD835\uDFF5':'9',
+    '\uD835\uDFF6':'0','\uD835\uDFF7':'1','\uD835\uDFF8':'2','\uD835\uDFF9':'3','\uD835\uDFFA':'4',
+    '\uD835\uDFFB':'5','\uD835\uDFFC':'6','\uD835\uDFFD':'7','\uD835\uDFFE':'8','\uD835\uDFFF':'9',
+    '\uFF10':'0','\uFF11':'1','\uFF12':'2','\uFF13':'3','\uFF14':'4',
+    '\uFF15':'5','\uFF16':'6','\uFF17':'7','\uFF18':'8','\uFF19':'9'
+  };
+  // Replace surrogate pairs
+  var out='';
+  var i=0;
+  while(i<text.length){
+    var cp=text.codePointAt(i);
+    var ch=String.fromCodePoint(cp);
+    if(map[ch]!==undefined){ out+=map[ch]; }
+    else {
+      // Strip other surrogates/emojis that jsPDF can't render - keep only latin + common
+      if(cp>0xFFFF){ out+=''; } // skip 4-byte unicode (emojis etc)
+      else { out+=ch; }
+    }
+    i+=ch.length;
+  }
+  return out;
+}
+
+// Clean text for jsPDF - keep Spanish chars, phone formats, strip HTML only
+function cleanForPdf(text){
+  return text
+    .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&nbsp;/g,' ')
+    .replace(/&#\d+;/g,'').replace(/&[a-z]+;/g,'')
+    .replace(/\{\{[^}]+\}\}/g,'').replace(/\{[^}]+\}/g,'');
+}
+
+// Parse content into structured blocks for PDF
+function getContentBlocks(row, mode){
+  var rawContent = row.content || '';
+  var title = row.title || '';
+  var blocks = [];
+
+  // H1 title block
+  blocks.push({type:'h1', text: cleanForPdf(title)});
+  blocks.push({type:'rule'});
+
+  if(mode === 'plain' || mode === 'font'){
+    // Plain/Font: split by lines, preserve paragraph breaks
+    // For font mode, numbers are already styled in screen but in PDF we use plain numbers
+    var lines = rawContent.split('\n');
+    var para = [];
+    for(var li=0; li<lines.length; li++){
+      var ln = cleanForPdf(stripFontChars(lines[li]));
+      if(ln.trim()){
+        para.push(ln.trim());
+      } else {
+        if(para.length){ blocks.push({type:'p', text:para.join(' ')}); para=[]; }
+        blocks.push({type:'blank'});
+      }
+    }
+    if(para.length) blocks.push({type:'p', text:para.join(' ')});
+    return blocks;
+  }
+
+  // SEO / Creative mode — parse into questions (H2) and paragraphs
+  // Clean template junk but NOT phone numbers
+  var cleaned = rawContent
+    .replace(/\{\{[^}]+\}\}/g,' ')
+    .replace(/\{[^}]+\}/g,' ')
+    .replace(/[\r\t]+/g,' ')
+    .replace(/\n{3,}/g,'\n\n')
+    .trim();
+
+  if(!cleaned){ blocks.push({type:'p',text:rawContent}); return blocks; }
+
+  var sents = safeSplit(cleaned);
+  if(!sents.length){ blocks.push({type:'p',text:cleaned}); return blocks; }
+
+  // Skip first sentence if it matches the title
+  var start=0;
+  if(title && sents.length && sents[0].toLowerCase().indexOf(title.toLowerCase().slice(0,10))!==-1) start=1;
+  var rest = sents.slice(start);
+
+  var sections=[],cur={heading:null,sents:[]};
+  for(var j=0;j<rest.length;j++){
+    var s=rest[j];
+    if(isQ(s)){
+      if(cur.sents.length||cur.heading) sections.push({heading:cur.heading,sents:cur.sents.slice()});
+      cur={heading:s.replace(/[.,;:!]$/,'').trim(),sents:[]};
+    } else { cur.sents.push(s); }
+  }
+  if(cur.sents.length||cur.heading) sections.push({heading:cur.heading,sents:cur.sents.slice()});
+
+  if(!sections.length){
+    for(var k=0;k<rest.length;k+=4){
+      var p=rest.slice(k,k+4).join(' ').trim();
+      if(p) blocks.push({type:'p',text:cleanForPdf(p)});
+    }
+  } else {
+    for(var m=0;m<sections.length;m++){
+      var sec=sections[m];
+      if(sec.heading) blocks.push({type:'h2',text:cleanForPdf(sec.heading)});
+      for(var n=0;n<sec.sents.length;n+=4){
+        var pp=sec.sents.slice(n,n+4).join(' ').trim();
+        if(pp) blocks.push({type:'p',text:cleanForPdf(pp)});
+      }
+    }
+  }
+  return blocks;
+}
+
+// Draw PDF using pure jsPDF text — no canvas, no screenshots
+function drawPdf(row, mode){
+  var jsPDF=window.jspdf&&window.jspdf.jsPDF;
+  if(!jsPDF) throw new Error('jsPDF not loaded');
+
+  var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var PW=210, PH=297;
+  var ML=18, MR=18, MT=18, MB=20;
+  var CW=PW-ML-MR; // 174mm usable width
+  var y=MT;
+  var lineH={h1:9,h2:7,p:6,blank:3,rule:0};
+
+  function newPage(){doc.addPage();y=MT;}
+  function checkSpace(need){ if(y+need>PH-MB) newPage(); }
+
+  // Word-wrap text into lines fitting width
+  function wrapLines(text,size,style){
+    doc.setFontSize(size);
+    doc.setFont('helvetica',style||'normal');
+    return doc.splitTextToSize(text, CW);
+  }
+
+  var blocks = getContentBlocks(row, mode);
+
+  for(var bi=0;bi<blocks.length;bi++){
+    var blk=blocks[bi];
+
+    if(blk.type==='blank'){
+      y+=3;
+      continue;
+    }
+
+    if(blk.type==='rule'){
+      checkSpace(4);
+      doc.setDrawColor(200,200,200);
+      doc.setLineWidth(0.3);
+      doc.line(ML,y,ML+CW,y);
+      y+=5;
+      continue;
+    }
+
+    if(blk.type==='h1'){
+      var h1lines=wrapLines(blk.text,17,'bold');
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(17);
+      doc.setTextColor(17,17,17);
+      for(var a=0;a<h1lines.length;a++){
+        checkSpace(10);
+        doc.text(h1lines[a],ML,y);
+        y+=10;
+      }
+      y+=2;
+      continue;
+    }
+
+    if(blk.type==='h2'){
+      y+=4; // extra space before heading
+      var h2lines=wrapLines(blk.text,12,'bold');
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(12);
+      doc.setTextColor(20,20,20);
+      for(var b=0;b<h2lines.length;b++){
+        checkSpace(7);
+        doc.text(h2lines[b],ML,y);
+        y+=7;
+      }
+      // thin underline after h2
+      doc.setDrawColor(210,210,210);
+      doc.setLineWidth(0.2);
+      doc.line(ML,y,ML+CW,y);
+      y+=4;
+      continue;
+    }
+
+    // paragraph / plain
+    var plines=wrapLines(blk.text,10,'normal');
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(10);
+    doc.setTextColor(51,51,51);
+    for(var c2=0;c2<plines.length;c2++){
+      checkSpace(6);
+      doc.text(plines[c2],ML,y);
+      y+=6;
+    }
+    y+=2;
+  }
+
+  return doc.output('arraybuffer');
+}
+
+// HTML doc for HTML download
+function buildPrintableHtml(row, mode){
+  var title=row.title||'Document';
+  var blocks=getContentBlocks(row,mode);
+  var html='';
+  for(var i=0;i<blocks.length;i++){
+    var b=blocks[i];
+    if(b.type==='h1') html+='<h1>'+safeStr(b.text)+'</h1>';
+    else if(b.type==='rule') html+='<hr style="border:none;border-top:1px solid #ddd;margin:0 0 12pt;">';
+    else if(b.type==='h2') html+='<h2>'+safeStr(b.text)+'</h2>';
+    else if(b.type==='p'||b.type==='plain') html+='<p>'+safeStr(b.text)+'</p>';
+    else if(b.type==='blank') html+='<br>';
+  }
+  return '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>'+safeStr(title)+'</title>'
+    +'<style>body{font-family:Arial,sans-serif;margin:40px auto;max-width:800px;color:#111;line-height:1.85;font-size:11pt;}'
+    +'h1{font-size:20pt;font-weight:800;margin:0 0 8pt;}hr{border:none;border-top:1px solid #ddd;margin:0 0 14pt;}'
+    +'h2{font-size:13pt;font-weight:700;margin:14pt 0 6pt;border-bottom:1px solid #ddd;padding-bottom:3pt;}'
+    +'p{margin:0 0 10pt;color:#333;font-size:11pt;line-height:1.8;}</style>'
+    +'</head><body>'+html+'</body></html>';
+}
+
+function getRowHtml(row){ return buildPrintableHtml(row, curMode); }
+function safeStr(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function buildHtmlDoc(bh,t,m){return buildPrintableHtml({content:bh,title:t},m);}
+function buildPdfHtml(bh,t,m){return buildPrintableHtml({content:bh,title:t},m);}
+
+// Generate PDF for a single row
+async function generateRealPDF(row){
+  if(!window.jspdf||!window.jspdf.jsPDF) throw new Error('jsPDF not loaded');
+  return drawPdf(row, curMode);
+}
+
+async function dlHTML(){
+  if(!processedRows.length){showSpill('\u26a0 Process data first','warn');return;}
+  showProg('Generating HTML files\u2026');
+  if(typeof JSZip==='undefined'){showSpill('\u26a0 JSZip not loaded','warn');hideProg();return;}
+  var zip=new JSZip();
+  for(var i=0;i<processedRows.length;i++){
+    zip.file(sanFn(processedRows[i].filename)+'.html', buildPrintableHtml(processedRows[i],curMode));
+    updProg((i+1)/processedRows.length); await tick();
+  }
+  triggerDl(await zip.generateAsync({type:'blob'}),'textreplace-html.zip');
+  hideProg(); showSpill('\u2713 HTML ZIP downloaded','ok');
+}
+
+async function dlPDF(){
+  if(!processedRows.length){showSpill('\u26a0 Process data first','warn');return;}
+
+  // Load jsPDF if needed
+  if(!window.jspdf||!window.jspdf.jsPDF){
+    showProg('Loading PDF engine\u2026');
+    try{
+      await new Promise(function(res,rej){
+        var s=document.createElement('script');
+        s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+        s.onload=res; s.onerror=rej; document.head.appendChild(s);
+      });
+    }catch(e){ showSpill('\u26a0 Could not load PDF engine','warn'); hideProg(); return; }
+  }
+  if(typeof JSZip==='undefined'){showSpill('\u26a0 JSZip not loaded','warn');hideProg();return;}
+
+  var zip=new JSZip();
+  for(var i=0;i<processedRows.length;i++){
+    var row=processedRows[i];
+    document.getElementById('prog-label').textContent='PDF '+(i+1)+'/'+processedRows.length+': '+sanFn(row.filename);
+    try{
+      zip.file(sanFn(row.filename)+'.pdf', drawPdf(row,curMode));
+    }catch(e){
+      zip.file(sanFn(row.filename)+'.html', buildPrintableHtml(row,curMode));
+    }
+    updProg((i+1)/processedRows.length); await tick();
+  }
+  triggerDl(await zip.generateAsync({type:'blob'}),'textreplace-pdfs.zip');
+  hideProg();
+  showSpill('\u2713 '+processedRows.length+' real PDF files downloaded','ok');
+  document.getElementById('sb-msg').textContent='Downloaded '+processedRows.length+' .pdf files';
+}
+
+// ===================================================
+// PROGRESS
+// ===================================================
+function showProg(msg){document.getElementById('prog-section').style.display='';document.getElementById('prog-label').textContent=msg;document.getElementById('prog-bar').style.width='0%';}
+function updProg(f){document.getElementById('prog-bar').style.width=(f*100).toFixed(0)+'%';}
+function hideProg(){document.getElementById('prog-section').style.display='none';}
+function tick(){return new Promise(function(r){setTimeout(r,0);});}
+
+// ===================================================
+// UTILITIES
+// ===================================================
+function sanFn(name){return(name||'document').replace(/[^a-zA-Z0-9_\-\.\u00C0-\u024F]/g,'_').slice(0,80);}
+function triggerDl(blob,name){var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},1000);}
+function eh(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function escR(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
+function showSpill(msg,cls){var p=document.getElementById('spill');p.textContent=msg;p.className='spill '+cls;p.style.display='';setTimeout(function(){p.style.display='none';},3000);}
+
+async function doCopy(){
+  var txt='';
+  var el=getCurOutEl();
+  if(el&&el.innerText){txt=el.innerText;}
+  else if(lastResult){
+    txt=lastResultIsHtml?htmlToPlainText(lastResult):lastResult;
+  } else {
+    var ci=document.getElementById('ci');
+    txt=ci.innerText||ci.textContent||'';
+  }
+  if(!txt)return;
+  try{await navigator.clipboard.writeText(txt);showSpill('\u2713 Copied','ok');}
+  catch(e){document.getElementById('cm-ta').value=txt;document.getElementById('cm').style.display='flex';document.getElementById('cm-ta').select();}
+}
+
+// ===================================================
+// DRAG DIVIDER
+// ===================================================
+(function(){
+  var dv=document.getElementById('dvdr'),sv=document.getElementById('split'),drag=false,sx=0,sw=0;
+  dv.addEventListener('mousedown',function(e){drag=true;sx=e.clientX;sw=document.getElementById('pi').getBoundingClientRect().width;dv.classList.add('drag');document.body.style.cursor='col-resize';document.body.style.userSelect='none';});
+  document.addEventListener('mousemove',function(e){if(!drag)return;var pi=document.getElementById('pi'),tot=sv.getBoundingClientRect().width-5,nw=Math.max(160,Math.min(tot-160,sw+(e.clientX-sx)));pi.style.flex='none';pi.style.width=nw+'px';});
+  document.addEventListener('mouseup',function(){if(!drag)return;drag=false;dv.classList.remove('drag');document.body.style.cursor='';document.body.style.userSelect='';});
+})();
+
+// ===================================================
+// BULK PATTERNS
+// ===================================================
+function openBulkModal(){
+  document.getElementById('bulk-ta').value='';
+  document.getElementById('bulk-modal').style.display='flex';
+  setTimeout(function(){document.getElementById('bulk-ta').focus();},80);
+}
+function closeBulkModal(){
+  document.getElementById('bulk-modal').style.display='none';
+}
+function applyBulkPatterns(){
+  var raw=document.getElementById('bulk-ta').value;
+  var lines=raw.split(/[\r\n]+/).map(function(l){return l.trim();}).filter(Boolean);
+  if(!lines.length){closeBulkModal();return;}
+  var existing=new Set(getPats());
+  var added=0;
+  lines.forEach(function(pat){
+    if(!existing.has(pat)){addPatRow(pat,false);existing.add(pat);added++;}
+  });
+  savePats();updateAll();
+  closeBulkModal();
+  showSpill('\u2713 '+added+' pattern'+(added!==1?'s':'')+' added'+(lines.length-added?' ('+(lines.length-added)+' dupes skipped)':''),'ok');
+}
+document.addEventListener('click',function(e){
+  if(e.target===document.getElementById('bulk-modal'))closeBulkModal();
+  if(e.target===document.getElementById('impexp-modal'))closeImpExp();
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){closeBulkModal();closeImpExp();}
+});
+
+// ===================================================
+// CLEAR ALL PATTERNS
+// ===================================================
+function clearAllPats(){
+  var pats=getPats();
+  if(!pats.length){showSpill('\u2139 No patterns to clear','warn');return;}
+  if(!confirm('Remove all '+pats.length+' custom pattern(s)?'))return;
+  document.getElementById('pat-rows').innerHTML='';
+  savePats();updateAll();
+  showSpill('\u2713 All patterns cleared','ok');
+}
+
+// ===================================================
+// IMPORT / EXPORT PATTERNS
+// ===================================================
+var _ieMode='export';
+function openImpExp(mode){
+  _ieMode=mode||'export';
+  document.getElementById('impexp-modal').style.display='flex';
+  switchImpExp(_ieMode);
+}
+function closeImpExp(){
+  document.getElementById('impexp-modal').style.display='none';
+}
+function switchImpExp(mode){
+  _ieMode=mode;
+  var isExp=(mode==='export');
+  document.getElementById('iet-export').classList.toggle('active',isExp);
+  document.getElementById('iet-import').classList.toggle('active',!isExp);
+  document.getElementById('ie-export-panel').style.display=isExp?'':'none';
+  document.getElementById('ie-import-panel').style.display=isExp?'none':'';
+  document.getElementById('ie-action-btn').style.display=isExp?'none':'';
+  document.getElementById('impexp-title').textContent=isExp?'Export Patterns':'Import Patterns';
+  if(isExp){
+    var pats=getPats();
+    document.getElementById('ie-export-content').textContent=pats.length?JSON.stringify(pats,null,2):'(No patterns saved yet)';
+  } else {
+    document.getElementById('ie-msg').className='impexp-msg';
+    document.getElementById('ie-import-ta').value='';
+    document.getElementById('ie-file-name').textContent='';
+    document.getElementById('ie-action-btn').style.display='';
+  }
+}
+function ieDownload(fmt){
+  var pats=getPats();
+  if(!pats.length){showSpill('\u2139 No patterns to export','warn');return;}
+  var content,mime,ext;
+  if(fmt==='json'){content=JSON.stringify(pats,null,2);mime='application/json';ext='json';}
+  else{content=pats.join('\n');mime='text/plain';ext='txt';}
+  var blob=new Blob([content],{type:mime});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='custom_patterns.'+ext;a.click();
+  URL.revokeObjectURL(a.href);
+  showSpill('\u2713 Patterns exported as .'+ext,'ok');
+}
+function ieCopyExport(){
+  var content=document.getElementById('ie-export-content').textContent;
+  try{navigator.clipboard.writeText(content);showSpill('\u2713 Copied to clipboard','ok');}
+  catch(e){var ta=document.createElement('textarea');ta.value=content;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();showSpill('\u2713 Copied','ok');}
+}
+function ieFileLoad(input){
+  var file=input.files[0];if(!file)return;
+  document.getElementById('ie-file-name').textContent=file.name;
+  var reader=new FileReader();
+  reader.onload=function(e){document.getElementById('ie-import-ta').value=e.target.result;};
+  reader.readAsText(file);
+  input.value='';
+}
+function applyImport(){
+  var raw=document.getElementById('ie-import-ta').value.trim();
+  var msg=document.getElementById('ie-msg');
+  if(!raw){msg.textContent='\u26a0 Nothing to import.';msg.className='impexp-msg err';return;}
+  var pats=[];
+  try{
+    var j=JSON.parse(raw);
+    if(Array.isArray(j)){pats=j.map(function(x){return String(x).trim();}).filter(Boolean);}
+    else{msg.textContent='\u26a0 JSON must be an array like ["...", "..."]';msg.className='impexp-msg err';return;}
+  }catch(e){
+    pats=raw.split(/[\r\n,]+/).map(function(l){return l.replace(/^["'\s]+|["'\s]+$/g,'');}).filter(Boolean);
+  }
+  if(!pats.length){msg.textContent='\u26a0 No valid patterns found.';msg.className='impexp-msg err';return;}
+  var merge=document.getElementById('ie-merge').checked;
+  var existing=merge?new Set(getPats()):new Set();
+  if(!merge){document.getElementById('pat-rows').innerHTML='';}
+  var added=0;
+  pats.forEach(function(p){if(!existing.has(p)){addPatRow(p,false);existing.add(p);added++;}});
+  savePats();updateAll();
+  var skipped=pats.length-added;
+  msg.textContent='\u2713 '+added+' pattern'+(added!==1?'s':'')+' imported'+(skipped?' ('+skipped+' skipped as duplicates)':'')+'.';
+  msg.className='impexp-msg ok';
+  showSpill('\u2713 Imported '+added+' patterns','ok');
+}
+
+// ===================================================
+// INIT
+// ===================================================
+document.getElementById('ci').addEventListener('input',onInput);
+
+// ── Smart paste handler: strips ALL inline styles, preserves only semantic structure ──
+document.getElementById('ci').addEventListener('paste', function(e){
+  e.preventDefault();
+  var html = (e.clipboardData||window.clipboardData).getData('text/html');
+  var plain = (e.clipboardData||window.clipboardData).getData('text/plain');
+
+  if(html){
+    // Parse into a temp container
+    var tmp = document.createElement('div');
+    tmp.innerHTML = html;
+
+    // 1. Remove non-content elements entirely
+    tmp.querySelectorAll('style,meta,link,script,head,o\\:p,[class^="Mso"],[class*=" Mso"]').forEach(function(el){el.remove();});
+
+    // 2. Unwrap purely decorative / formatting wrappers but keep their children
+    var unwrapTags = ['font','span','div','section','article','aside','header','footer','nav','figure','figcaption','table','tbody','tr','td','th'];
+    // Iterative unwrap (order matters — do multiple passes until stable)
+    var changed = true;
+    var passes = 0;
+    while(changed && passes < 10){
+      changed = false; passes++;
+      unwrapTags.forEach(function(tag){
+        tmp.querySelectorAll(tag).forEach(function(el){
+          // Keep <div> that wraps a heading (Google Docs wraps headings in divs)
+          // Keep spans with no meaningful children — just text
+          var frag = document.createDocumentFragment();
+          // For divs/sections add a line-break before if not first child
+          var addBr = (tag==='div'||tag==='section'||tag==='article'||tag==='td'||tag==='th');
+          if(addBr && el.previousSibling && el.previousSibling.nodeName!=='BR' && el.textContent.trim()){
+            frag.appendChild(document.createElement('br'));
+          }
+          while(el.firstChild) frag.appendChild(el.firstChild);
+          el.parentNode.replaceChild(frag, el);
+          changed = true;
+        });
+      });
+    }
+
+    // 3. Strip ALL attributes from every remaining element
+    tmp.querySelectorAll('*').forEach(function(el){
+      // Only attributes to keep: none (href handled below)
+      var keep = [];
+      if(el.tagName === 'A') keep = ['href'];
+      // Remove all except kept
+      Array.from(el.attributes).forEach(function(attr){
+        if(keep.indexOf(attr.name) === -1) el.removeAttribute(attr.name);
+      });
+    });
+
+    // 4. Collapse consecutive <br> tags into at most two
+    var brRe = /(<br\s*\/?>\s*){3,}/gi;
+    var cleaned = tmp.innerHTML.replace(brRe, '<br><br>');
+
+    // 5. Collapse meaningless empty tags
+    cleaned = cleaned.replace(/<(p|h[1-6]|li)>\s*<\/\1>/gi, '');
+
+    // 6. Insert at caret
+    document.execCommand('insertHTML', false, cleaned);
+  } else if(plain){
+    // Plain text fallback — convert line breaks, escape HTML entities
+    var escaped = plain
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/\n\n+/g,'</p><p>')
+      .replace(/\n/g,'<br>');
+    document.execCommand('insertHTML', false, '<p>'+escaped+'</p>');
+  }
+  onInput();
+});
+
+// Show placeholder when empty on init
+(function(){
+  var ph=document.getElementById('ci-placeholder');
+  if(ph)ph.style.display='';
+})();
+loadMaps();loadPats();updateAll();
+
+// ── Mark output panes dirty when user manually edits them ──
+['out-plain','out-seo','out-font'].forEach(function(id){
+  var el=document.getElementById(id);
+  if(!el)return;
+  el.addEventListener('input',function(){
+    if(id==='out-plain') outDirty.plain=true;
+    else if(id==='out-seo') outDirty.seo=true;
+    else if(id==='out-font') outDirty.font=true;
+  });
+});
+</script>
+</div><!-- /app-root -->
+
+<!-- ══════════════════════════════════════
+     FIREBASE SECURITY + ADMIN PANEL
+     ══════════════════════════════════════ -->
+<script>
+(function(){
+'use strict';
+
+// ══════════════════════════════════════════════
+// DYNAMIC FIREBASE LOADER
+// Loads SDKs in sequence, then initialises app
+// ══════════════════════════════════════════════
+
+// db is exposed globally so saveMaps/loadMaps in the tool script can access it
+window.db = null;
+
+function loadScript(url){
+  return new Promise(function(resolve, reject){
+    var s = document.createElement('script');
+    s.src = url;
+    s.onload = resolve;
+    s.onerror = function(){ reject(new Error('Failed to load: ' + url)); };
+    document.head.appendChild(s);
+  });
+}
+
+var FB_URL_APP = 'https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-app-compat.min.js';
+var FB_URL_DB  = 'https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-database-compat.min.js';
+var FB_CONFIG  = { databaseURL: 'https://numbertoolchanger-default-rtdb.firebaseio.com/' };
+
+// Load Firebase SDKs then init everything
+loadScript(FB_URL_APP)
+  .then(function(){ return loadScript(FB_URL_DB); })
+  .then(function(){
+    // Firebase is ready — init app
+    if (!firebase.apps.length) { firebase.initializeApp(FB_CONFIG); }
+    var dbInst = firebase.database();
+    window.db = dbInst;
+    initApp(dbInst);
+  })
+  .catch(function(err){
+    // Firebase failed (e.g. no internet, blocked CDN) — fall back to local auth
+    console.warn('Firebase unavailable, using local fallback:', err.message);
+    initApp(null);
+  });
+
+function initApp(db){
+
+// ══════════════════════════════════════════════
+// ANTI-DEVTOOLS / ANTI-COPY HARDENING
+// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════
+// SECURITY LAYER — anti-inspect, anti-copy, anti-devtools
+// ══════════════════════════════════════════════
+(function(){
+  'use strict';
+
+  // ── Helper: is target inside an editable zone? ──
+  // Walks up DOM so clicking a child <p> inside #ci still returns true
+  function isEditable(el){
+    if(!el) return false;
+    var cur = el;
+    while(cur && cur !== document.documentElement){
+      var tag = (cur.tagName||'');
+      if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') return true;
+      if(cur.isContentEditable) return true;
+      var id = cur.id||'';
+      if(id==='ci'||id==='out-plain'||id==='out-seo'||id==='out-cre'||id==='out-font') return true;
+      cur = cur.parentElement;
+      if(!cur) break;
+    }
+    return false;
+  }
+
+  // ── 1. Right-click: BLOCK everywhere EXCEPT inputs & textareas ──
+  document.addEventListener('contextmenu', function(e){
+    if(isEditable(e.target)) return;
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  }, true);
+
+  // ── 2. Keyboard shortcuts: block all inspect/source/save shortcuts ──
+  document.addEventListener('keydown', function(e){
+    var k = e.key||'';
+    var ctrl = e.ctrlKey||e.metaKey;
+    var shift = e.shiftKey;
+
+    if(k==='F12'){ e.preventDefault(); e.stopPropagation(); return false; }
+    if(k==='F5'){ e.preventDefault(); e.stopPropagation(); return false; }
+
+    if(ctrl && shift && ['i','I','j','J','c','C','k','K'].indexOf(k)!==-1){
+      e.preventDefault(); e.stopPropagation(); return false;
+    }
+
+    if(ctrl && ['u','U','s','S','p','P'].indexOf(k)!==-1){
+      if(isEditable(e.target)) return;
+      e.preventDefault(); e.stopPropagation(); return false;
+    }
+
+    if(ctrl && (k==='a'||k==='A') && !isEditable(e.target)){
+      e.preventDefault(); return false;
+    }
+  }, true);
+
+  // ── 3. Block text selection outside inputs ──
+  document.addEventListener('selectstart', function(e){
+    if(isEditable(e.target)) return;
+    e.preventDefault();
+    return false;
+  }, true);
+
+  // ── 4. Block copy/cut outside inputs ──
+  document.addEventListener('copy', function(e){
+    if(isEditable(e.target)) return;
+    e.preventDefault();
+    if(e.clipboardData) e.clipboardData.setData('text/plain','');
+    return false;
+  }, true);
+  document.addEventListener('cut', function(e){
+    if(isEditable(e.target)) return;
+    e.preventDefault();
+    return false;
+  }, true);
+
+  // ── 5. Block drag ──
+  document.addEventListener('dragstart', function(e){
+    if(isEditable(e.target)) return;
+    e.preventDefault();
+    return false;
+  }, true);
+
+  // ── 6. Block print ──
+  window.addEventListener('beforeprint', function(){
+    document.body.style.display='none';
+  });
+  window.addEventListener('afterprint', function(){
+    document.body.style.display='';
+  });
+
+  // ── DevTools: once triggered, PERMANENTLY lock — no blinking ──
+  var _dtLocked = false;
+
+  function _lockPage(){
+    if(_dtLocked) return; // never run twice — prevents blinking
+    _dtLocked = true;
+
+    // 1. Wipe the entire body so Elements panel shows nothing useful
+    try{
+      document.body.innerHTML = '<div id="__dt_shield" style="position:fixed;inset:0;z-index:2147483647;background:#000;display:flex;align-items:center;justify-content:center;font-family:monospace;text-align:center;flex-direction:column;gap:20px;cursor:not-allowed;">'
+        + '<div style="font-size:48px;">⛔</div>'
+        + '<div style="color:#ef4444;font-size:24px;font-weight:800;letter-spacing:2px;">Developer Tools Detected</div>'
+        + '<div style="color:#475569;font-size:13px;max-width:340px;line-height:1.7;">Close DevTools and <b style="color:#94a3b8;">refresh the page</b> to continue using TextReplace Pro.<br><span style="color:#334155;font-size:11px;">Unauthorized inspection is not permitted.</span></div>'
+        + '</div>';
+    }catch(e){}
+
+    // 2. Also clear head scripts/styles so Sources tab shows nothing
+    try{
+      var scripts = document.head.querySelectorAll('script');
+      scripts.forEach(function(s){ s.remove(); });
+    }catch(e){}
+
+    // 3. Keep re-wiping body every 300ms in case devtools restores it
+    setInterval(function(){
+      try{
+        if(!document.getElementById('__dt_shield')){
+          document.body.innerHTML='<div id="__dt_shield" style="position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;color:#ef4444;font-family:monospace;font-size:20px;font-weight:800;">⛔ Unauthorized Access Blocked</div>';
+        }
+      }catch(e){}
+    }, 300);
+  }
+
+  // ── 7. Multi-method DevTools detection — ONE-WAY trigger only ──
+
+  // Method A: window size difference (docked left/right/bottom)
+  // Uses a confirmation counter to avoid false positives, but NEVER hides once shown
+  var _sizeHits = 0;
+  function _checkSizeDetect(){
+    if(_dtLocked) return; // already locked, stop checking
+    var wDiff = window.outerWidth - window.innerWidth;
+    var hDiff = window.outerHeight - window.innerHeight;
+    if(wDiff > 130 || hDiff > 130){
+      _sizeHits++;
+      if(_sizeHits >= 2) _lockPage(); // 2 consecutive hits = confirmed
+    } else {
+      _sizeHits = 0; // reset on false reading but never unlock
+    }
+  }
+  setInterval(_checkSizeDetect, 500);
+
+  // Method B: console getter trap (catches when Console panel is open)
+  var _consoleImg = new Image();
+  Object.defineProperty(_consoleImg, 'id', {
+    get: function(){ _lockPage(); }
+  });
+  var _consoleCheckRunning = true;
+  (function _consoleLoop(){
+    if(_dtLocked){ _consoleCheckRunning=false; return; }
+    try{ console.log(_consoleImg); console.clear(); }catch(e){}
+    setTimeout(_consoleLoop, 1500);
+  })();
+
+  // Method C: toString trap
+  var _tsObj = { toString: function(){ _lockPage(); return ''; } };
+  (function _tsLoop(){
+    if(_dtLocked) return;
+    try{ console.log('%c', _tsObj); }catch(e){}
+    setTimeout(_tsLoop, 1500);
+  })();
+
+  // Method D: debugger timing trap
+  (function _dbgLoop(){
+    if(_dtLocked) return;
+    try{
+      (function(){
+        var _t = performance.now ? performance.now() : +new Date();
+        debugger;
+        if((performance.now ? performance.now() : +new Date()) - _t > 100) _lockPage();
+      })();
+    }catch(e){}
+    setTimeout(_dbgLoop, 2000);
+  })();
+
+  // ── 8. view-source:// block ──
+  if(window.location.protocol==='view-source:'){
+    document.documentElement.innerHTML='';
+  }
+
+  // ── 9. Block iframe embedding ──
+  if(window.top !== window.self){
+    try{ window.top.location = window.self.location; }catch(e){ document.body.innerHTML=''; }
+  }
+
+  // ── 10. Suppress console output completely ──
+  try{
+    var _noop = function(){};
+    ['log','warn','info','debug','dir','dirxml','table','trace','group','groupCollapsed','groupEnd','error'].forEach(function(m){
+      try{ if(typeof console[m]==='function') console[m]=_noop; }catch(e){}
+    });
+  }catch(e){}
+
+  // ── 11. CSS: prevent text selection everywhere except inputs ──
+  var _style = document.createElement('style');
+  _style.textContent=[
+    '*:not(input):not(textarea):not(select){',
+    '  -webkit-user-select:none!important;',
+    '  -moz-user-select:none!important;',
+    '  -ms-user-select:none!important;',
+    '  user-select:none!important;',
+    '}',
+    'input,textarea,select,[contenteditable],#ci,#out-plain,#out-seo,#out-cre,#out-font,#ci *,[contenteditable] *,#out-plain *,#out-seo *,#out-cre *,#out-font *{',
+    '  -webkit-user-select:text!important;',
+    '  -moz-user-select:text!important;',
+    '  -ms-user-select:text!important;',
+    '  user-select:text!important;',
+    '  cursor:text!important;',
+    '}'
+  ].join('');
+  document.head.appendChild(_style);
+
+})();
+
+// ══════════════════════════════════════════════
+// SHA-256 (pure JS, no dependencies)
+// ══════════════════════════════════════════════
+// sha256 — native Web Crypto (async, used for passwords)
+async function sha256(str){
+  var buf=new TextEncoder().encode(str);
+  var hashBuf=await crypto.subtle.digest('SHA-256',buf);
+  return Array.from(new Uint8Array(hashBuf)).map(function(b){return('0'+b.toString(16)).slice(-2);}).join('');
+}
+// sha256sync — kept for session token signing (ASCII only)
+function sha256sync(str){
+  function rr(v,a){return(v>>>a)|(v<<(32-a));}
+  var mw=Math.pow(2,32),res='',words=[],abl=str.length*8;
+  var h=[0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+  var k=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+    0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+    0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+    0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+    0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+    0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+    0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+    0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+  str+='';
+  while(str.length%64-56)str+=' ';
+  for(var i=0;i<str.length;i++){var j=str.charCodeAt(i);if(j>>8)return'';words[i>>2]|=j<<((3-i)%4*8);}
+  words[words.length]=((abl/mw)|0);words[words.length]=(abl%mw);
+  for(var i2=0;i2<words.length;){
+    var w=words.slice(i2,i2+=16),oh=h.slice(0);
+    for(var j2=0;j2<64;j2++){
+      var w2=w[j2-15],w3=w[j2-2],a=h[0],e=h[4];
+      var t1=h[7]+(rr(e,6)^rr(e,11)^rr(e,25))+((e&h[5])^((~e)&h[6]))+k[j2]+(w[j2]=j2<16?w[j2]:(w[j2-16]+(rr(w2,7)^rr(w2,18)^(w2>>>3))+w[j2-7]+(rr(w3,17)^rr(w3,19)^(w3>>>10)))|0);
+      var t2=(rr(a,2)^rr(a,13)^rr(a,22))+((a&h[1])^(a&h[2])^(h[1]&h[2]));
+      h=[(t1+t2)|0,a,h[1],h[2],(h[3]+t1)|0,e,h[5],h[6]];
+    }
+    for(var j3=0;j3<8;j3++)h[j3]=(h[j3]+oh[j3])|0;
+  }
+  for(var i3=0;i3<8;i3++){for(var j4=3;j4+1;j4--){var b=(h[i3]>>(j4*8))&255;res+=((b<16)?'0':'')+b.toString(16);}}
+  return res;
+}
+function safeEqual(a,b){
+  if(a.length!==b.length)return false;
+  var d=0;for(var i=0;i<a.length;i++)d|=a.charCodeAt(i)^b.charCodeAt(i);
+  return d===0;
+}
+
+// ══════════════════════════════════════════════
+// CREDENTIAL MANAGER — Firebase + localStorage fallback
+// ══════════════════════════════════════════════
+var CREDS_PATH   = 'tool_auth/credentials';
+var STATS_PATH   = 'tool_auth/stats';
+var SESSION_KEY  = '_trp_fb_auth_v2';
+var CREDS_KEY    = '_trp_creds_v2';   // local fallback
+var MAX_ATTEMPTS = 5;
+var LOCKOUT_MS   = 30 * 60 * 1000;
+var attempts = 0, locked = false, lockUntil = 0;
+var _cachedCreds = null;
+
+// Default hashes: admin / admin123
+var DEFAULT_U = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
+var DEFAULT_P = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
+
+function getLocalCreds(){
+  try{
+    var s = localStorage.getItem(CREDS_KEY);
+    if(s){ var o=JSON.parse(s); if(o.u&&o.p) return o; }
+  }catch(e){}
+  return {u: DEFAULT_U, p: DEFAULT_P};
+}
+function saveLocalCreds(u,p){
+  try{ localStorage.setItem(CREDS_KEY, JSON.stringify({u:u,p:p})); }catch(e){}
+}
+
+function loadCredsFromFirebase(cb, username){
+  // Always fetch fresh from Firebase so changes from admin panel take effect immediately
+  if(!db){ cb(getLocalCreds()); return; }
+  // NEW: per-user creds lookup from user_creds map (supports multiple users)
+  if(username){
+    sha256(username.toLowerCase().trim()).then(function(uh){
+      db.ref('tool_auth/user_creds/'+uh).once('value').then(function(snap){
+        var data=snap.val();
+        if(data&&data.u&&data.p){
+          _cachedCreds={u:data.u,p:data.p};
+          saveLocalCreds(data.u,data.p);
+          cb(_cachedCreds);
+        } else {
+          // Fallback: legacy single-cred path
+          db.ref(CREDS_PATH).once('value').then(function(snap2){
+            var d2=snap2.val();
+            if(d2&&d2.u&&d2.p){ _cachedCreds={u:d2.u,p:d2.p}; saveLocalCreds(d2.u,d2.p); cb(_cachedCreds); }
+            else { var loc=getLocalCreds(); _cachedCreds=loc; cb(loc); }
+          }).catch(function(){ cb(getLocalCreds()); });
+        }
+      }).catch(function(){ cb(getLocalCreds()); });
+    });
+    return;
+  }
+  db.ref(CREDS_PATH).once('value').then(function(snap){
+    var data = snap.val();
+    if(data && data.u && data.p){
+      _cachedCreds = {u:data.u, p:data.p};
+      saveLocalCreds(data.u, data.p);
+      cb(_cachedCreds);
+    } else {
+      var local = getLocalCreds();
+      _cachedCreds = local;
+      db.ref(CREDS_PATH).set({u:local.u, p:local.p, created:Date.now()});
+      cb(local);
+    }
+  }).catch(function(){
+    cb(getLocalCreds());
+  });
+}
+
+function saveCredsToFirebase(uh, ph, cb){
+  saveLocalCreds(uh, ph);       // always save locally first
+  _cachedCreds = {u:uh, p:ph};
+  if(!db){ if(cb) cb(true); return; }
+  db.ref(CREDS_PATH).set({u:uh, p:ph, updated:Date.now()}).then(function(){
+    if(cb) cb(true);
+  }).catch(function(){ if(cb) cb(false); });
+}
+
+// ── Session ──
+function randomToken(){
+  var a=new Uint8Array(32); crypto.getRandomValues(a);
+  return Array.from(a).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+}
+function checkSession(){
+  try{
+    var s=sessionStorage.getItem(SESSION_KEY); if(!s) return false;
+    var o=JSON.parse(s);
+    if(!o.token||!o.exp||!o.sig) return false;
+    if(Date.now()>o.exp) return false;
+    return safeEqual(sha256sync(o.token+String(o.exp)+'_fb_salt'), o.sig);
+  }catch(e){ return false; }
+}
+function storeSession(username){
+  var t=randomToken(), exp=Date.now()+(4*60*60*1000);
+  var sig=sha256sync(t+String(exp)+'_fb_salt');
+  try{ sessionStorage.setItem(SESSION_KEY, JSON.stringify({token:t,exp:exp,sig:sig,user:username})); }catch(e){}
+  logLoginEvent(username, true);
+}
+function clearSession(){ try{ sessionStorage.removeItem(SESSION_KEY); }catch(e){} }
+function getSessionUser(){
+  try{ var s=sessionStorage.getItem(SESSION_KEY); return s?JSON.parse(s).user||'user':null; }catch(e){ return null; }
+}
+window.getSessionUser = getSessionUser;
+
+// ── Logging ──
+function logLoginEvent(username, success){
+  if(!db) return;
+  var now=Date.now();
+  try{
+    var key=db.ref(STATS_PATH+'/logins').push().key;
+    sha256(username||'').then(function(uh){
+      db.ref(STATS_PATH+'/logins/'+key).set({username:uh.slice(0,8)+'…',success:success,timestamp:now,date:new Date(now).toISOString()});
+      db.ref(STATS_PATH+'/counters').transaction(function(c){
+        c=c||{};
+        if(success){c.totalLogins=(c.totalLogins||0)+1;c.lastLogin=now;}
+        else{c.failedAttempts=(c.failedAttempts||0)+1;}
+        return c;
+      });
+    });
+  }catch(e){}
+}
+function logToolUsage(action){
+  if(!db) return;
+  try{
+    db.ref(STATS_PATH+'/usage/'+action).transaction(function(v){return (v||0)+1;});
+    db.ref(STATS_PATH+'/lastActivity').set(Date.now());
+  }catch(e){}
+}
+
+// ── Lockout ──
+function loadLockout(){ try{var s=sessionStorage.getItem('_trp_fb_lock');if(s){var o=JSON.parse(s);attempts=o.a||0;lockUntil=o.u||0;}}catch(e){} }
+function saveLockout(){ try{sessionStorage.setItem('_trp_fb_lock',JSON.stringify({a:attempts,u:lockUntil}));}catch(e){} }
+function isLocked(){ if(locked||lockUntil>Date.now()){locked=true;return true;} locked=false;return false; }
+
+// ══════════════════════════════════════════════
+// UNLOCK APP
+// ══════════════════════════════════════════════
+var _sessionSaltAtLogin = null; // Snapshot of salt when user logged in
+var _saltListener = null;        // Firebase listener handle
+var _activeSessionRef = null;    // Firebase ref for this session — removed on logout
+
+function forceLogoutNow(){
+  // Called when admin forces logout — wipe session and show login screen
+  clearSession();
+  var ar=document.getElementById('app-root');
+  var ls=document.getElementById('login-screen');
+  if(ar) ar.style.display='none';
+  if(ls){ ls.style.display='flex'; ls.style.opacity='1'; }
+  document.title='TextReplace Pro — Login';
+  try{document.getElementById('l-user').value='';}catch(e){}
+  try{document.getElementById('l-pass').value='';}catch(e){}
+  try{document.getElementById('login-error').className='login-error hide';}catch(e){}
+  try{document.getElementById('login-lock').classList.remove('show');}catch(e){}
+  try{document.getElementById('login-btn').textContent='Sign In →';document.getElementById('login-btn').disabled=false;document.getElementById('login-btn').style.cssText='';}catch(e){}
+  // Stop the salt listener to avoid firing again
+  if(_saltListener && db){ try{db.ref('tool_auth/session_salt').off('value',_saltListener);}catch(e){} _saltListener=null; }
+}
+
+// Tool logout — called from the Logout button in the topbar
+window.doToolLogout = function(){
+  if(!confirm('Are you sure you want to logout?')) return;
+  // Capture username BEFORE clearing session (clearSession wipes it)
+  var currentUser = getSessionUser();
+  // Remove this session from Firebase directly via stored ref
+  if(_activeSessionRef){
+    try{ _activeSessionRef.remove(); }catch(e){}
+    _activeSessionRef = null;
+  }
+  // Fallback: also sweep by username in case ref is gone
+  if(db && currentUser){
+    try{
+      db.ref('tool_auth/online_sessions').once('value').then(function(snap){
+        var d=snap.val()||{};
+        Object.keys(d).forEach(function(k){
+          if(d[k].user===currentUser) db.ref('tool_auth/online_sessions/'+k).remove();
+        });
+      });
+    }catch(e){}
+  }
+  clearSession();
+  if(_saltListener && db){ try{db.ref('tool_auth/session_salt').off('value',_saltListener);}catch(e){} _saltListener=null; }
+  var ar=document.getElementById('app-root');
+  var ls=document.getElementById('login-screen');
+  if(ar) ar.style.display='none';
+  if(ls){ ls.style.display='flex'; ls.style.opacity='1'; ls.style.transition=''; }
+  document.title='TextReplace Pro — Login';
+  try{document.getElementById('l-user').value='';}catch(e){}
+  try{document.getElementById('l-pass').value='';}catch(e){}
+  try{document.getElementById('login-error').className='login-error hide';}catch(e){}
+  try{document.getElementById('login-lock').classList.remove('show');}catch(e){}
+  try{document.getElementById('login-btn').textContent='Sign In →';document.getElementById('login-btn').disabled=false;document.getElementById('login-btn').style.cssText='';}catch(e){}
+  try{document.getElementById('sb-current-user').textContent='—';}catch(e){}
+  setTimeout(function(){try{document.getElementById('l-user').focus();}catch(e){}},200);
+};
+
+function unlockApp(){
+  var ls=document.getElementById('login-screen');
+  var ar=document.getElementById('app-root');
+  ls.style.opacity='0'; ls.style.transition='opacity .4s';
+  setTimeout(function(){ls.style.display='none';},400);
+  ar.style.display='block';
+  document.title='TextReplace Pro';
+  // Update the sidebar logged-in user badge
+  var sbUser=document.getElementById('sb-current-user');
+  if(sbUser){var u=getSessionUser()||'user';sbUser.textContent=u;}
+  try{document.getElementById('l-user').value='';}catch(e){}
+  try{document.getElementById('l-pass').value='';}catch(e){}
+  logToolUsage('appOpen');
+  if(db){
+    try{
+      var sid=randomToken().slice(0,12);
+      var _sessionUser=getSessionUser()||'user';
+      // Store ref at closure level so doToolLogout can remove it directly
+      _activeSessionRef=db.ref('tool_auth/online_sessions/'+sid);
+      var _sessionData={user:_sessionUser,joinedAt:Date.now(),lastSeen:Date.now()};
+      _activeSessionRef.set(_sessionData);
+      _activeSessionRef.onDisconnect().remove();
+      // Heartbeat: update lastSeen every 20s so admin panel shows accurate online status
+      // (admin auto-refreshes every 35s, so 20s heartbeat guarantees fresh data)
+      setInterval(function(){
+        try{ if(_activeSessionRef) _activeSessionRef.update({lastSeen:Date.now()}); }catch(e){}
+      }, 20000);
+    }catch(e){}
+    // ── Real-time force-logout listener ──
+    // Snapshot the current session_salt value at login time.
+    // If admin changes it, the session is immediately invalidated.
+    setTimeout(function(){
+      try{
+        if(!db||typeof db.ref!=='function') return;
+        db.ref('tool_auth/session_salt').once('value').then(function(snap){
+          _sessionSaltAtLogin = snap.val() ? JSON.stringify(snap.val()) : null;
+          // Only start listening AFTER we have the baseline snapshot
+          if(_saltListener){try{db.ref('tool_auth/session_salt').off('value',_saltListener);}catch(e){}}
+          _saltListener = function(snap2){
+            var current = snap2.val() ? JSON.stringify(snap2.val()) : null;
+            if(_sessionSaltAtLogin !== null && current !== _sessionSaltAtLogin){
+              // Salt changed after we logged in — admin forced logout
+              forceLogoutNow();
+            }
+          };
+          db.ref('tool_auth/session_salt').on('value', _saltListener);
+        }).catch(function(){});
+      }catch(e){}
+    }, 1500); // slight delay to let Firebase fully initialize
+  }
+}
+
+// ══════════════════════════════════════════════
+// MAIN LOGIN
+// ══════════════════════════════════════════════
+window.doLogin = function(){
+  var btn=document.getElementById('login-btn');
+  var errEl=document.getElementById('login-error');
+  var lockEl=document.getElementById('login-lock');
+  var card=document.getElementById('login-card');
+  if(isLocked()){
+    var rem=Math.ceil((lockUntil-Date.now())/60000);
+    lockEl.textContent='🔒 Locked for '+rem+' more minute'+(rem!==1?'s':'')+'.';
+    lockEl.classList.add('show'); errEl.className='login-error hide'; return;
+  }
+  var user=document.getElementById('l-user').value.trim();
+  var pass=document.getElementById('l-pass').value;
+  if(!user||!pass){ errEl.className='login-error show'; errEl.textContent='⚠ Please fill in both fields.'; return; }
+  btn.disabled=true; btn.textContent='Verifying…';
+  Promise.all([sha256(user),sha256(pass)]).then(function(hashes){
+  var uh=hashes[0], ph=hashes[1];
+  loadCredsFromFirebase(function(creds){
+    if(safeEqual(uh,creds.u)&&safeEqual(ph,creds.p)){
+      attempts=0; saveLockout();
+      // ── Check session limit before allowing login ──
+      if(db){
+        var userKey=(user||'').toLowerCase().replace(/[.#$[\]]/g,'_');
+        Promise.all([
+          db.ref('tool_auth/online_sessions').once('value'),
+          db.ref('tool_auth/user_limits').once('value')
+        ]).then(function(snaps){
+          var sessData=snaps[0].val()||{};
+          var limitsData=snaps[1].val()||{};
+          // Count truly active sessions (seen in last 2 minutes)
+          var now=Date.now();
+          var activeSessions=Object.values(sessData).filter(function(s){
+            return s.lastSeen&&(now-s.lastSeen)<120000;
+          }).length;
+          // Get limit for this user (stored as {username: limit} or fallback 1)
+          var maxAllowed=limitsData[user.toLowerCase()]||limitsData[userKey]||1;
+          if(activeSessions>=maxAllowed){
+            errEl.className='login-error show';
+            errEl.textContent='⚠ Max sessions reached ('+activeSessions+'/'+maxAllowed+' active). Close another session first.';
+            btn.disabled=false; btn.textContent='Sign In →';
+            card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+          } else {
+            storeSession(user);
+            btn.textContent='✓ Access Granted';
+            btn.style.background='linear-gradient(135deg,#22c55e,#16a34a)';
+            btn.style.animation='none';
+            setTimeout(unlockApp,500);
+          }
+        }).catch(function(){
+          // Firebase error — allow login (fail open so user isn't locked out)
+          storeSession(user);
+          btn.textContent='✓ Access Granted';
+          btn.style.background='linear-gradient(135deg,#22c55e,#16a34a)';
+          btn.style.animation='none';
+          setTimeout(unlockApp,500);
+        });
+      } else {
+        // No Firebase — allow login
+        storeSession(user);
+        btn.textContent='✓ Access Granted';
+        btn.style.background='linear-gradient(135deg,#22c55e,#16a34a)';
+        btn.style.animation='none';
+        setTimeout(unlockApp,500);
+      }
+    } else {
+      attempts++; saveLockout();
+      logLoginEvent(user,false);
+      var rem2=MAX_ATTEMPTS-attempts;
+      if(attempts>=MAX_ATTEMPTS){
+        lockUntil=Date.now()+LOCKOUT_MS; locked=true; saveLockout();
+        lockEl.textContent='🔒 Account locked 30 min after '+MAX_ATTEMPTS+' failed attempts.';
+        lockEl.classList.add('show'); errEl.className='login-error hide';
+      } else {
+        errEl.className='login-error show';
+        errEl.textContent='⚠ Wrong credentials. '+rem2+' attempt'+(rem2!==1?'s':'')+' left.';
+        lockEl.classList.remove('show');
+      }
+      card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+      btn.disabled=false; btn.textContent='Sign In →';
+      document.getElementById('l-pass').value='';
+      document.getElementById('l-pass').focus();
+    }
+  }, user);
+  }); // end Promise.all
+};
+
+window.toggleEye = function(){
+  var p=document.getElementById('l-pass'),b=document.getElementById('eye-btn');
+  if(p.type==='password'){p.type='text';b.textContent='🙈';}else{p.type='password';b.textContent='👁';}
+};
+
+// ══════════════════════════════════════════════
+// CHANGE CREDENTIALS
+// ══════════════════════════════════════════════
+window.openCredsModal=function(){
+  document.getElementById('creds-modal').classList.add('open');
+  ['c-cur-pass','c-new-user','c-new-pass','c-new-pass2'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('creds-msg').className='creds-msg';
+  document.getElementById('strength-bar').style.width='0%';
+  document.getElementById('strength-hint').textContent='';
+  setTimeout(function(){document.getElementById('c-cur-pass').focus();},100);
+};
+window.closeCredsModal=function(){ document.getElementById('creds-modal').classList.remove('open'); };
+window.openCredsFromApp=function(){ window.openCredsModal(); };
+
+window.checkStrength=function(pw){
+  var bar=document.getElementById('strength-bar'),hint=document.getElementById('strength-hint');
+  if(!pw){bar.style.width='0%';hint.textContent='';return;}
+  var s=0;
+  if(pw.length>=6)s++;if(pw.length>=10)s++;
+  if(/[A-Z]/.test(pw))s++;if(/[0-9]/.test(pw))s++;if(/[^A-Za-z0-9]/.test(pw))s++;
+  var lv=[{w:'20%',c:'#ef4444',t:'Very weak'},{w:'40%',c:'#f97316',t:'Weak'},{w:'60%',c:'#f59e0b',t:'Fair'},{w:'80%',c:'#22c55e',t:'Strong'},{w:'100%',c:'#10b981',t:'Very strong'}][Math.min(s,4)];
+  bar.style.width=lv.w;bar.style.background=lv.c;hint.textContent=lv.t;hint.style.color=lv.c;
+};
+
+window.saveCredentials=async function(){
+  var msg=document.getElementById('creds-msg');
+  var curPass=document.getElementById('c-cur-pass').value;
+  var newUser=document.getElementById('c-new-user').value.trim();
+  var newPass=document.getElementById('c-new-pass').value;
+  var newPass2=document.getElementById('c-new-pass2').value;
+  function showMsg(txt,type){msg.textContent=txt;msg.className='creds-msg '+type;}
+  if(!curPass){showMsg('⚠ Enter your current password to verify.','err');return;}
+  var curPassH=await sha256(curPass);
+  loadCredsFromFirebase(async function(creds){
+    if(!safeEqual(curPassH,creds.p)){
+      showMsg('⚠ Current password is incorrect.','err');
+      document.getElementById('c-cur-pass').value='';
+      document.getElementById('c-cur-pass').focus(); return;
+    }
+    var finalUser=newUser||null, finalPass=null;
+    if(newPass||newPass2){
+      if(newPass.length<6){showMsg('⚠ New password must be at least 6 characters.','err');return;}
+      if(newPass!==newPass2){showMsg('⚠ Passwords do not match.','err');return;}
+      finalPass=newPass;
+    }
+    if(!finalUser&&!finalPass){showMsg('⚠ Enter a new username and/or password.','err');return;}
+    if(finalUser&&finalUser.length<3){showMsg('⚠ Username must be at least 3 characters.','err');return;}
+    var newUH=finalUser?await sha256(finalUser):creds.u;
+    var newPH=finalPass?await sha256(finalPass):creds.p;
+    saveCredsToFirebase(newUH,newPH,function(ok){
+      if(!ok){showMsg('⚠ Failed to save. Check connection.','err');return;}
+      var changed=[];if(finalUser)changed.push('username');if(finalPass)changed.push('password');
+      showMsg('✓ '+changed.join(' and ')+' updated! Please log in again.','ok');
+      setTimeout(function(){
+        clearSession(); closeCredsModal();
+        var ar=document.getElementById('app-root'),ls=document.getElementById('login-screen');
+        if(ar)ar.style.display='none';
+        if(ls){ls.style.display='flex';ls.style.opacity='1';}
+        document.title='TextReplace Pro — Login';
+        document.getElementById('l-user').value='';
+        document.getElementById('l-pass').value='';
+        document.getElementById('login-error').className='login-error hide';
+        document.getElementById('login-lock').classList.remove('show');
+        document.getElementById('login-btn').textContent='Sign In →';
+        document.getElementById('login-btn').disabled=false;
+        document.getElementById('login-btn').style.cssText='';
+      },2000);
+    });
+  });
+};
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+loadLockout();
+// Pre-load creds from Firebase so login is instant
+loadCredsFromFirebase(function(){});
+
+if(checkSession()){
+  unlockApp();
+} else {
+  window.addEventListener('load',function(){
+    var u=document.getElementById('l-user');
+    if(u) setTimeout(function(){u.focus();},200);
+  });
+}
+
+document.getElementById('login-screen').addEventListener('contextmenu',function(e){e.preventDefault();});
+
+// ══════════════════════════════════════════════
+// ADMIN PANEL FUNCTIONS (need db in closure)
+// ══════════════════════════════════════════════
+var ADM_SESSION_KEY='_trp_adm_v1';
+var _admLoggedIn=false, _admUsername='';
+
+(function(){
+  if(window.location.search.includes('admin=1')){ setTimeout(openAdminPanel,500); }
+  document.addEventListener('keydown',function(e){
+    if(e.ctrlKey&&e.altKey&&(e.key==='a'||e.key==='A')){ e.preventDefault(); openAdminPanel(); }
+  });
+  try{
+    var s=sessionStorage.getItem(ADM_SESSION_KEY);
+    if(s){var o=JSON.parse(s);if(o.ok&&Date.now()<o.exp){_admLoggedIn=true;_admUsername=o.user||'admin';}}
+  }catch(e){}
+})();
+
+function openAdminPanel(){
+  document.getElementById('admin-overlay').classList.add('open');
+  if(_admLoggedIn){ showAdmDashboard(_admUsername); }
+  else{
+    document.getElementById('adm-login-box').style.display='';
+    document.getElementById('adm-dashboard').classList.remove('show');
+    setTimeout(function(){document.getElementById('adm-user').focus();},100);
+  }
+}
+function closeAdminPanel(){ document.getElementById('admin-overlay').classList.remove('open'); }
+window.openAdminPanel=openAdminPanel;
+window.closeAdminPanel=closeAdminPanel;
+
+window.adminLogin=function(){
+  var user=document.getElementById('adm-user').value.trim();
+  var pass=document.getElementById('adm-pass').value;
+  var btn=document.getElementById('adm-login-btn');
+  var err=document.getElementById('adm-err');
+  if(!user||!pass){err.classList.add('show');err.textContent='⚠ Fill in both fields.';return;}
+  btn.disabled=true;btn.textContent='Verifying…';
+  Promise.all([sha256(user),sha256(pass)]).then(function(hashes){
+  var auh=hashes[0],aph=hashes[1];
+  loadCredsFromFirebase(function(creds){
+    if(safeEqual(auh,creds.u)&&safeEqual(aph,creds.p)){
+      _admLoggedIn=true;_admUsername=user;
+      try{sessionStorage.setItem(ADM_SESSION_KEY,JSON.stringify({ok:true,user:user,exp:Date.now()+3600000}));}catch(e){}
+      err.classList.remove('show');
+      showAdmDashboard(user);
+    } else {
+      err.classList.add('show');err.textContent='⚠ Incorrect credentials.';
+      btn.disabled=false;btn.textContent='Sign In to Admin Panel →';
+      document.getElementById('adm-pass').value='';
+    }
+  });
+  }); // end Promise.all
+};
+
+window.adminLogout=function(){
+  _admLoggedIn=false;_admUsername='';
+  try{sessionStorage.removeItem(ADM_SESSION_KEY);}catch(e){}
+  document.getElementById('adm-dashboard').classList.remove('show');
+  document.getElementById('adm-login-box').style.display='';
+  ['adm-user','adm-pass'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('adm-login-btn').disabled=false;
+  document.getElementById('adm-login-btn').textContent='Sign In to Admin Panel →';
+};
+
+function showAdmDashboard(user){
+  document.getElementById('adm-login-box').style.display='none';
+  document.getElementById('adm-dashboard').classList.add('show');
+  document.getElementById('adm-logged-user').textContent=user;
+  admLoadStats(); admLoadLogs();
+  if(db){
+    try{
+      db.ref(STATS_PATH+'/counters').on('value',function(snap){
+        var c=snap.val()||{};
+        document.getElementById('stat-logins').textContent=c.totalLogins||0;
+        document.getElementById('stat-fails').textContent=c.failedAttempts||0;
+        if(c.lastLogin){var d=new Date(c.lastLogin);document.getElementById('stat-lastlogin').textContent=d.toLocaleDateString()+' '+d.toLocaleTimeString();}
+      });
+      db.ref(STATS_PATH+'/usage/appOpen').on('value',function(snap){
+        document.getElementById('stat-opens').textContent=snap.val()||0;
+      });
+    }catch(e){}
+  }
+}
+
+function admLoadStats(){
+  if(!db){return;}
+  db.ref(STATS_PATH+'/counters').once('value').then(function(snap){
+    var c=snap.val()||{};
+    document.getElementById('stat-logins').textContent=c.totalLogins||0;
+    document.getElementById('stat-fails').textContent=c.failedAttempts||0;
+    if(c.lastLogin){var d=new Date(c.lastLogin);document.getElementById('stat-lastlogin').textContent=d.toLocaleDateString()+' '+d.toLocaleTimeString();}
+  }).catch(function(){});
+}
+
+window.admLoadLogs=function(){
+  var tbody=document.getElementById('adm-logs-tbody');
+  tbody.innerHTML='<tr><td colspan="4" class="adm-empty">Loading…</td></tr>';
+  if(!db){tbody.innerHTML='<tr><td colspan="4" class="adm-empty">Firebase not connected.</td></tr>';return;}
+  db.ref(STATS_PATH+'/logins').limitToLast(25).once('value').then(function(snap){
+    var data=snap.val();
+    if(!data){tbody.innerHTML='<tr><td colspan="4" class="adm-empty">No login records yet.</td></tr>';return;}
+    var rows=Object.values(data).reverse();
+    tbody.innerHTML=rows.map(function(r,i){
+      var d=new Date(r.timestamp);
+      var dt=d.toLocaleDateString()+' '+d.toLocaleTimeString();
+      var badge=r.success?'<span class="adm-badge ok">✓ SUCCESS</span>':'<span class="adm-badge fail">✗ FAILED</span>';
+      return '<tr><td style="color:#334155;">'+(i+1)+'</td><td style="font-family:monospace;">'+eh2(r.username||'—')+'</td><td>'+badge+'</td><td>'+dt+'</td></tr>';
+    }).join('');
+  }).catch(function(){tbody.innerHTML='<tr><td colspan="4" class="adm-empty">Failed to load logs.</td></tr>';});
+};
+
+window.admCheckStrength=function(pw){
+  var bar=document.getElementById('adm-str-bar');
+  if(!pw){bar.style.width='0%';return;}
+  var s=0;
+  if(pw.length>=6)s++;if(pw.length>=10)s++;
+  if(/[A-Z]/.test(pw))s++;if(/[0-9]/.test(pw))s++;if(/[^A-Za-z0-9]/.test(pw))s++;
+  var cols=['#ef4444','#f97316','#f59e0b','#22c55e','#10b981'];
+  var ws=['20%','40%','60%','80%','100%'];
+  bar.style.width=ws[Math.min(s,4)];bar.style.background=cols[Math.min(s,4)];
+};
+
+window.admSaveCreds=function(){
+  var newUser=document.getElementById('adm-new-user').value.trim();
+  var newPass=document.getElementById('adm-new-pass').value;
+  var newPass2=document.getElementById('adm-new-pass2').value;
+  var msg=document.getElementById('adm-creds-msg');
+  function showMsg(t,c){msg.textContent=t;msg.className='adm-msg '+c;}
+  if(!newUser&&!newPass){showMsg('⚠ Enter a new username and/or password.','err');return;}
+  if(newPass&&newPass.length<6){showMsg('⚠ Password must be at least 6 characters.','err');return;}
+  if(newPass&&newPass!==newPass2){showMsg('⚠ Passwords do not match.','err');return;}
+  if(newUser&&newUser.length<3){showMsg('⚠ Username must be at least 3 characters.','err');return;}
+  loadCredsFromFirebase(async function(creds){
+    var newUH=newUser?await sha256(newUser):creds.u;
+    var newPH=newPass?await sha256(newPass):creds.p;
+    saveCredsToFirebase(newUH,newPH,function(ok){
+      if(ok){
+        var changed=[];if(newUser)changed.push('username');if(newPass)changed.push('password');
+        showMsg('✓ '+changed.join(' & ')+' updated in Firebase!','ok');
+        ['adm-new-user','adm-new-pass','adm-new-pass2'].forEach(function(id){document.getElementById(id).value='';});
+        document.getElementById('adm-str-bar').style.width='0%';
+        if(newUser){_admUsername=newUser;document.getElementById('adm-logged-user').textContent=newUser;}
+      } else { showMsg('⚠ Failed to save. Check Firebase connection.','err'); }
+    });
+  });
+};
+
+window.admForceLogout=function(){
+  if(!confirm('Force logout will invalidate all current sessions. Continue?'))return;
+  var msg=document.getElementById('adm-session-msg');
+  if(!db){msg.textContent='⚠ Firebase not connected.';msg.className='adm-msg err';return;}
+  db.ref('tool_auth/session_salt').set({val:Math.random().toString(36).slice(2),ts:Date.now()}).then(function(){
+    msg.textContent='✓ All user sessions invalidated.';msg.className='adm-msg ok';
+  }).catch(function(){msg.textContent='⚠ Failed. Check Firebase permissions.';msg.className='adm-msg err';});
+};
+
+window.admClearStats=function(){
+  if(!confirm('Clear all stats and login logs? This cannot be undone.'))return;
+  var msg=document.getElementById('adm-session-msg');
+  if(!db){msg.textContent='⚠ Firebase not connected.';msg.className='adm-msg err';return;}
+  db.ref(STATS_PATH).remove().then(function(){
+    msg.textContent='✓ Stats cleared.';msg.className='adm-msg ok';
+    ['stat-logins','stat-fails','stat-opens'].forEach(function(id){document.getElementById(id).textContent='0';});
+    document.getElementById('stat-lastlogin').textContent='—';
+    document.getElementById('adm-logs-tbody').innerHTML='<tr><td colspan="4" class="adm-empty">No records.</td></tr>';
+  }).catch(function(){msg.textContent='⚠ Failed.';msg.className='adm-msg err';});
+};
+
+function eh2(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// End of initApp()
+} // end function initApp
+
+})();
+</script>
+
+<style>
+#admin-overlay {
+  position:fixed;inset:0;z-index:9999999;
+  background:linear-gradient(135deg,#020617,#0a1628,#020617);
+  display:none;flex-direction:column;align-items:center;
+  font-family:'Courier New',monospace;
+  overflow-y:auto;
+  padding:0 0 40px;
+}
+#admin-overlay.open { display:flex; }
+
+.adm-topbar {
+  width:100%;background:rgba(0,0,0,.6);
+  border-bottom:1px solid rgba(59,130,246,.2);
+  padding:12px 24px;display:flex;align-items:center;gap:10px;
+  backdrop-filter:blur(10px);flex-shrink:0;
+}
+.adm-topbar .adm-logo { font-size:16px;font-weight:900;color:#3b82f6;letter-spacing:2px;text-transform:uppercase; }
+.adm-topbar .adm-sub { font-size:10px;color:#475569;margin-left:4px; }
+.adm-close-btn {
+  margin-left:auto;padding:7px 18px;
+  background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);
+  border-radius:7px;color:#f87171;font-family:'Courier New',monospace;
+  font-size:12px;font-weight:700;cursor:pointer;
+  transition:all .15s;letter-spacing:.5px;
+}
+.adm-close-btn:hover{background:rgba(239,68,68,.3);color:#fff;}
+
+.adm-login-box {
+  margin:60px auto;
+  background:rgba(13,21,32,.95);
+  border:1px solid rgba(59,130,246,.25);
+  border-radius:18px;padding:36px 42px;
+  width:min(400px,92vw);
+  box-shadow:0 32px 80px rgba(0,0,0,.8);
+}
+.adm-login-box h2 { font-size:18px;font-weight:900;color:#f1f5f9;margin:0 0 6px;letter-spacing:1px; }
+.adm-login-box p { font-size:11px;color:#475569;margin:0 0 22px;line-height:1.5; }
+.adm-input {
+  width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);
+  border-radius:8px;color:#e2e8f0;font-family:'Courier New',monospace;
+  font-size:13px;padding:10px 13px;outline:none;margin-bottom:12px;
+  transition:border-color .15s;
+}
+.adm-input:focus { border-color:#3b82f6; }
+.adm-btn {
+  width:100%;padding:11px;background:linear-gradient(135deg,#1d4ed8,#3b82f6);
+  color:#fff;border:none;border-radius:8px;font-family:'Courier New',monospace;
+  font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.5px;
+  transition:all .15s;
+}
+.adm-btn:hover { filter:brightness(1.15);transform:translateY(-1px); }
+.adm-btn:disabled { opacity:.5;cursor:not-allowed;transform:none; }
+.adm-err { font-size:11px;color:#f87171;margin-top:8px;padding:6px 10px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:5px;display:none; }
+.adm-err.show { display:block; }
+
+/* Dashboard */
+.adm-dashboard {
+  width:min(1100px,96vw);margin:30px auto 0;display:none;
+}
+.adm-dashboard.show { display:block; }
+
+/* Logout row */
+.adm-user-row {
+  display:flex;align-items:center;gap:10px;
+  background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);
+  border-radius:10px;padding:10px 16px;margin-bottom:24px;
+}
+.adm-user-row .adm-user-tag { font-size:12px;color:#94a3b8; }
+.adm-user-row .adm-username { font-size:13px;font-weight:700;color:#3b82f6; }
+.adm-logout-btn {
+  margin-left:auto;padding:5px 14px;
+  background:transparent;border:1px solid rgba(239,68,68,.3);
+  border-radius:6px;color:#f87171;font-family:'Courier New',monospace;
+  font-size:11px;cursor:pointer;transition:all .15s;
+}
+.adm-logout-btn:hover { background:rgba(239,68,68,.15); }
+
+/* Stats grid */
+.adm-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:24px; }
+.adm-stat-card {
+  background:rgba(13,21,32,.8);border:1px solid rgba(59,130,246,.15);
+  border-radius:12px;padding:18px 20px;
+}
+.adm-stat-label { font-size:9px;color:#475569;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px; }
+.adm-stat-val { font-size:28px;font-weight:900;color:#e2e8f0;line-height:1; }
+.adm-stat-sub { font-size:10px;color:#64748b;margin-top:4px; }
+.adm-stat-card.green .adm-stat-val { color:#22c55e; }
+.adm-stat-card.blue .adm-stat-val { color:#3b82f6; }
+.adm-stat-card.amber .adm-stat-val { color:#f59e0b; }
+.adm-stat-card.red .adm-stat-val { color:#ef4444; }
+
+/* Section */
+.adm-section {
+  background:rgba(13,21,32,.8);border:1px solid rgba(59,130,246,.12);
+  border-radius:14px;padding:22px 24px;margin-bottom:18px;
+}
+.adm-section-title {
+  font-size:11px;font-weight:700;color:#3b82f6;text-transform:uppercase;
+  letter-spacing:1px;margin-bottom:16px;display:flex;align-items:center;gap:8px;
+}
+.adm-section-title::after { content:'';flex:1;height:1px;background:rgba(59,130,246,.1); }
+
+/* Creds change */
+.adm-creds-row { display:flex;gap:12px;flex-wrap:wrap; }
+.adm-creds-col { flex:1;min-width:200px; }
+.adm-label { font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:block; }
+.adm-save-btn {
+  padding:9px 22px;background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:#fff;border:none;border-radius:7px;font-family:'Courier New',monospace;
+  font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;margin-top:18px;
+}
+.adm-save-btn:hover{filter:brightness(1.1);transform:translateY(-1px);}
+.adm-msg { font-size:11px;margin-top:10px;padding:7px 11px;border-radius:6px;display:none; }
+.adm-msg.ok{display:block;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:#4ade80;}
+.adm-msg.err{display:block;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#f87171;}
+
+/* Login log table */
+.adm-table { width:100%;border-collapse:collapse;font-size:11px; }
+.adm-table th {
+  background:rgba(59,130,246,.1);color:#3b82f6;
+  font-weight:700;padding:7px 10px;text-align:left;
+  border-bottom:1px solid rgba(59,130,246,.15);letter-spacing:.3px;
+}
+.adm-table td { padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.04);color:#94a3b8; }
+.adm-table tr:last-child td { border-bottom:none; }
+.adm-badge { display:inline-block;padding:2px 7px;border-radius:10px;font-size:9px;font-weight:700; }
+.adm-badge.ok { background:rgba(34,197,94,.15);color:#22c55e; }
+.adm-badge.fail { background:rgba(239,68,68,.15);color:#ef4444; }
+.adm-empty { color:#334155;font-size:12px;padding:16px 0;text-align:center; }
+
+/* Live indicator */
+.adm-live-dot {
+  width:7px;height:7px;border-radius:50%;background:#22c55e;
+  display:inline-block;margin-right:5px;
+  animation:livePulse 1.5s ease-in-out infinite;
+}
+@keyframes livePulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+.adm-refresh-btn {
+  padding:5px 12px;background:transparent;border:1px solid rgba(255,255,255,.1);
+  border-radius:5px;color:#64748b;font-family:'Courier New',monospace;
+  font-size:10px;cursor:pointer;transition:all .15s;margin-left:auto;
+}
+.adm-refresh-btn:hover{border-color:#3b82f6;color:#3b82f6;}
+
+/* Strength bar */
+.adm-str-wrap { height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:5px; }
+.adm-str-bar { height:100%;border-radius:2px;transition:width .3s,background .3s;width:0%; }
+</style>
+
+<div id="admin-overlay">
+  <!-- Top bar -->
+  <div class="adm-topbar">
+    <span class="adm-logo">⚡ TRP Admin</span>
+    <span class="adm-sub">TextReplace Pro — Control Panel</span>
+    <button class="adm-close-btn" onclick="closeAdminPanel()">✕ Close</button>
+  </div>
+
+  <!-- Admin login form -->
+  <div class="adm-login-box" id="adm-login-box">
+    <h2>🔐 Admin Access</h2>
+    <p>Enter the tool credentials to access the admin panel.</p>
+    <input class="adm-input" type="text" id="adm-user" placeholder="Username" autocomplete="off"
+      onkeydown="if(event.key==='Enter')adminLogin()"/>
+    <input class="adm-input" type="password" id="adm-pass" placeholder="Password" autocomplete="off"
+      onkeydown="if(event.key==='Enter')adminLogin()"/>
+    <button class="adm-btn" id="adm-login-btn" onclick="adminLogin()">Sign In to Admin Panel →</button>
+    <div class="adm-err" id="adm-err">⚠ Incorrect credentials.</div>
+  </div>
+
+  <!-- Dashboard -->
+  <div class="adm-dashboard" id="adm-dashboard">
+
+    <!-- User row -->
+    <div class="adm-user-row">
+      <span class="adm-live-dot"></span>
+      <span class="adm-user-tag">Logged in as</span>
+      <span class="adm-username" id="adm-logged-user">—</span>
+      <button class="adm-logout-btn" onclick="adminLogout()">⏻ Logout Admin</button>
+    </div>
+
+    <!-- Stats cards -->
+    <div class="adm-grid" id="adm-stats-grid">
+      <div class="adm-stat-card green">
+        <div class="adm-stat-label">Total Logins</div>
+        <div class="adm-stat-val" id="stat-logins">—</div>
+        <div class="adm-stat-sub">All time</div>
+      </div>
+      <div class="adm-stat-card red">
+        <div class="adm-stat-label">Failed Attempts</div>
+        <div class="adm-stat-val" id="stat-fails">—</div>
+        <div class="adm-stat-sub">Blocked attacks</div>
+      </div>
+      <div class="adm-stat-card blue">
+        <div class="adm-stat-label">App Opens</div>
+        <div class="adm-stat-val" id="stat-opens">—</div>
+        <div class="adm-stat-sub">Tool usage count</div>
+      </div>
+      <div class="adm-stat-card amber">
+        <div class="adm-stat-label">Last Login</div>
+        <div class="adm-stat-val" style="font-size:14px;" id="stat-lastlogin">—</div>
+        <div class="adm-stat-sub">Most recent access</div>
+      </div>
+    </div>
+
+    <!-- Change credentials section -->
+    <div class="adm-section">
+      <div class="adm-section-title">🔑 Change Tool Credentials</div>
+      <div class="adm-creds-row">
+        <div class="adm-creds-col">
+          <label class="adm-label">New Username</label>
+          <input class="adm-input" type="text" id="adm-new-user" placeholder="Leave blank to keep current"
+            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+        </div>
+        <div class="adm-creds-col">
+          <label class="adm-label">New Password</label>
+          <input class="adm-input" type="password" id="adm-new-pass" placeholder="Min 6 characters"
+            autocomplete="off" oninput="admCheckStrength(this.value)"/>
+          <div class="adm-str-wrap"><div class="adm-str-bar" id="adm-str-bar"></div></div>
+        </div>
+        <div class="adm-creds-col">
+          <label class="adm-label">Confirm Password</label>
+          <input class="adm-input" type="password" id="adm-new-pass2" placeholder="Confirm new password"
+            autocomplete="off"/>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <button class="adm-save-btn" onclick="admSaveCreds()">💾 Save to Firebase</button>
+        <div style="font-size:10px;color:#334155;margin-top:18px;">Changes sync instantly across all sessions</div>
+      </div>
+      <div class="adm-msg" id="adm-creds-msg"></div>
+    </div>
+
+    <!-- Force logout section -->
+    <div class="adm-section">
+      <div class="adm-section-title">⚡ Session Control</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+        <button class="adm-btn" style="width:auto;padding:9px 20px;background:linear-gradient(135deg,#dc2626,#b91c1c);"
+          onclick="admForceLogout()">🔒 Force Logout All Users</button>
+        <button class="adm-btn" style="width:auto;padding:9px 20px;background:linear-gradient(135deg,#d97706,#b45309);"
+          onclick="admClearStats()">🗑 Clear Stats / Reset Counters</button>
+      </div>
+      <div class="adm-msg" id="adm-session-msg"></div>
+    </div>
+
+    <!-- Login log -->
+    <div class="adm-section">
+      <div class="adm-section-title" style="display:flex;width:100%;">
+        📋 Recent Login Activity
+        <button class="adm-refresh-btn" onclick="admLoadLogs()">↻ Refresh</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="adm-table">
+          <thead><tr><th>#</th><th>User (hashed)</th><th>Status</th><th>Date / Time</th></tr></thead>
+          <tbody id="adm-logs-tbody">
+            <tr><td colspan="4" class="adm-empty">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Firebase DB info -->
+    <div class="adm-section">
+      <div class="adm-section-title">🔥 Firebase Database</div>
+      <div style="font-size:11px;color:#64748b;line-height:1.8;">
+        <div>Database URL: <span style="color:#3b82f6;">https://numbertoolchanger-default-rtdb.firebaseio.com/</span></div>
+        <div>Credentials path: <code style="color:#22c55e;">tool_auth/credentials</code></div>
+        <div>Stats path: <code style="color:#22c55e;">tool_auth/stats</code></div>
+        <div style="margin-top:8px;padding:8px 12px;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.15);border-radius:6px;">
+          ⚠ Set Firebase rules to <code style="color:#f59e0b;">"auth != null"</code> or restrict by IP for production.
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /adm-dashboard -->
+</div><!-- /admin-overlay -->
+</body>
+</html>
