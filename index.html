@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>TextReplace Pro — Admin Panel</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:#020617;color:#e2e8f0;font-family:'Courier New',monospace;overflow-x:hidden;}
+.bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.bg-grad{position:absolute;inset:0;background:linear-gradient(125deg,#020617,#0a1628,#020617,#061020);background-size:400% 400%;animation:bgShift 15s ease infinite;}
+@keyframes bgShift{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+.bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(59,130,246,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.03) 1px,transparent 1px);background-size:60px 60px;}
+.bg-orb{position:absolute;border-radius:50%;filter:blur(100px);pointer-events:none;}
+.bg-orb-1{width:500px;height:500px;background:rgba(59,130,246,.06);top:-150px;left:-150px;animation:orbFloat 12s ease-in-out infinite;}
+.bg-orb-2{width:400px;height:400px;background:rgba(34,197,94,.04);bottom:-100px;right:-100px;animation:orbFloat 10s ease-in-out infinite reverse;}
+@keyframes orbFloat{0%,100%{transform:translate(0,0);}50%{transform:translate(30px,-40px);}}
+.wrap{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;}
+.topbar{background:rgba(2,6,23,.85);border-bottom:1px solid rgba(59,130,246,.2);padding:14px 28px;display:flex;align-items:center;gap:12px;backdrop-filter:blur(16px);position:sticky;top:0;z-index:100;flex-shrink:0;}
+.topbar-logo{font-size:15px;font-weight:900;color:#3b82f6;letter-spacing:3px;text-transform:uppercase;}
+.topbar-sep{width:1px;height:18px;background:rgba(255,255,255,.1);}
+.topbar-sub{font-size:10px;color:#475569;letter-spacing:.5px;}
+.topbar-badge{margin-left:auto;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 10px;border-radius:20px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);color:#22c55e;}
+.topbar-badge.offline{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.25);color:#f87171;}
+#login-screen{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+.login-card{background:rgba(13,21,32,.95);border:1px solid rgba(59,130,246,.25);border-radius:20px;padding:40px 44px 36px;width:min(420px,100%);box-shadow:0 32px 80px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.06);animation:cardIn .5s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(.97);}to{opacity:1;transform:none;}}
+.lc-icon{width:52px;height:52px;border-radius:14px;margin-bottom:22px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 24px rgba(59,130,246,.45);}
+.lc-title{font-size:22px;font-weight:900;color:#f1f5f9;letter-spacing:-0.5px;margin-bottom:4px;}
+.lc-sub{font-size:12px;color:#475569;margin-bottom:28px;line-height:1.6;}
+.field-label{font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:7px;}
+.field-wrap{margin-bottom:16px;}
+.field-input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:9px;color:#e2e8f0;font-family:'Courier New',monospace;font-size:13px;padding:11px 14px;outline:none;transition:border-color .2s,box-shadow .2s,background .2s;}
+.field-input:focus{border-color:#3b82f6;background:rgba(59,130,246,.06);box-shadow:0 0 0 3px rgba(59,130,246,.18);}
+.field-input::placeholder{color:#334155;}
+.login-btn{width:100%;padding:13px;margin-top:4px;background:linear-gradient(135deg,#3b82f6,#2563eb,#1d4ed8);color:#fff;border:none;border-radius:10px;font-family:'Courier New',monospace;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.5px;position:relative;overflow:hidden;transition:transform .15s,filter .15s;box-shadow:0 4px 20px rgba(59,130,246,.4);}
+.login-btn:hover{transform:translateY(-2px);filter:brightness(1.1);}
+.login-btn:active{transform:scale(.97);}
+.login-btn:disabled{opacity:.55;cursor:not-allowed;transform:none;}
+.login-err{margin-top:12px;padding:9px 13px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:7px;font-size:12px;color:#f87171;display:none;}
+.login-err.show{display:block;}
+#dashboard{display:none;flex:1;flex-direction:column;}
+#dashboard.show{display:flex;}
+.dash-inner{padding:28px 28px 60px;max-width:1200px;margin:0 auto;width:100%;}
+.user-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:10px;padding:10px 16px;margin-bottom:28px;}
+.user-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.user-tag{font-size:11px;color:#64748b;}
+.user-name{font-size:13px;font-weight:700;color:#3b82f6;}
+.logout-btn{margin-left:auto;padding:5px 14px;background:transparent;border:1px solid rgba(239,68,68,.3);border-radius:6px;color:#f87171;font-family:'Courier New',monospace;font-size:11px;cursor:pointer;transition:all .15s;}
+.logout-btn:hover{background:rgba(239,68,68,.15);}
+.tab-nav{display:flex;gap:4px;margin-bottom:28px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:5px;flex-wrap:wrap;}
+.tab-btn{flex:1;min-width:120px;padding:9px 14px;border-radius:8px;background:transparent;border:none;color:#475569;font-family:'Courier New',monospace;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;transition:all .18s;}
+.tab-btn.active{background:rgba(59,130,246,.2);color:#93c5fd;border:1px solid rgba(59,130,246,.3);}
+.tab-btn:hover:not(.active){color:#94a3b8;background:rgba(255,255,255,.04);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+.section{background:rgba(13,21,32,.8);border:1px solid rgba(59,130,246,.12);border-radius:14px;padding:22px 24px;margin-bottom:20px;}
+.section-title{font-size:10px;font-weight:700;color:#3b82f6;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+.section-title::after{content:'';flex:1;height:1px;background:rgba(59,130,246,.1);}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:24px;}
+.stat-card{background:rgba(13,21,32,.8);border:1px solid rgba(59,130,246,.15);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent,#3b82f6);}
+.stat-card.green{--accent:#22c55e;border-color:rgba(34,197,94,.15);}
+.stat-card.red{--accent:#ef4444;border-color:rgba(239,68,68,.15);}
+.stat-card.blue{--accent:#3b82f6;}
+.stat-card.amber{--accent:#f59e0b;border-color:rgba(245,158,11,.15);}
+.stat-label{font-size:9px;color:#475569;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;}
+.stat-val{font-size:30px;font-weight:900;color:var(--accent,#e2e8f0);line-height:1;font-variant-numeric:tabular-nums;}
+.stat-sub{font-size:10px;color:#64748b;margin-top:5px;}
+.tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.tbl th{background:rgba(59,130,246,.1);color:#3b82f6;font-weight:700;padding:9px 12px;text-align:left;border-bottom:1px solid rgba(59,130,246,.15);letter-spacing:.5px;font-size:10px;text-transform:uppercase;}
+.tbl td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.04);color:#94a3b8;vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:rgba(59,130,246,.03);}
+.tbl-empty{color:#334155;font-size:12px;padding:20px 0;text-align:center;}
+.code{font-family:'Courier New',monospace;font-size:12px;color:#e2e8f0;}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:700;letter-spacing:.5px;}
+.badge-ok{background:rgba(34,197,94,.15);color:#22c55e;border:1px solid rgba(34,197,94,.2);}
+.badge-fail{background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.2);}
+.badge-blue{background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.2);}
+.adm-input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e2e8f0;font-family:'Courier New',monospace;font-size:13px;padding:10px 13px;outline:none;margin-bottom:0;transition:border-color .15s,box-shadow .15s;}
+.adm-input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.15);}
+.adm-input::placeholder{color:#334155;}
+.str-wrap{height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:6px;}
+.str-bar{height:100%;border-radius:2px;transition:width .3s,background .3s;width:0%;}
+.save-btn{padding:10px 22px;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;border:none;border-radius:8px;font-family:'Courier New',monospace;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;}
+.save-btn:hover{filter:brightness(1.1);transform:translateY(-1px);}
+.save-btn.blue{background:linear-gradient(135deg,#3b82f6,#2563eb);}
+.save-btn.red{background:linear-gradient(135deg,#dc2626,#b91c1c);}
+.save-btn.amber{background:linear-gradient(135deg,#d97706,#b45309);}
+.adm-msg{font-size:11px;margin-top:10px;padding:8px 12px;border-radius:6px;display:none;}
+.adm-msg.ok{display:block;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:#4ade80;}
+.adm-msg.err{display:block;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#f87171;}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.refresh-btn{padding:6px 14px;background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:6px;color:#64748b;font-family:'Courier New',monospace;font-size:10px;cursor:pointer;transition:all .15s;margin-left:auto;}
+.refresh-btn:hover{border-color:#3b82f6;color:#3b82f6;}
+.db-info-row{font-size:11px;color:#64748b;line-height:2;display:flex;flex-wrap:wrap;gap:4px;align-items:center;}
+.db-info-row span.key{color:#94a3b8;}
+.db-info-row code{color:#22c55e;background:rgba(34,197,94,.08);padding:1px 6px;border-radius:4px;}
+.db-warn{margin-top:14px;padding:10px 14px;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.15);border-radius:8px;font-size:11px;color:#d97706;line-height:1.6;}
+.sec-list{display:flex;flex-direction:column;gap:10px;}
+.sec-item{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:rgba(59,130,246,.04);border:1px solid rgba(59,130,246,.1);border-radius:10px;}
+.sec-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.sec-label{font-size:12px;font-weight:700;color:#e2e8f0;margin-bottom:3px;}
+.sec-desc{font-size:11px;color:#64748b;line-height:1.6;}
+.sec-status{margin-left:auto;flex-shrink:0;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-thumb{background:rgba(59,130,246,.3);border-radius:2px;}
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(59,130,246,.3);border-top-color:#3b82f6;border-radius:50%;animation:spin .7s linear infinite;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── USER CARDS ── */
+.pw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:20px;}
+.pw-card{background:rgba(13,21,32,.9);border:1px solid rgba(59,130,246,.15);border-radius:14px;padding:20px 22px;}
+.pw-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.pw-av{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#3b82f6,#7c3aed);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#fff;font-family:'Courier New',monospace;flex-shrink:0;}
+.pw-uname{font-weight:700;font-size:14px;color:#e2e8f0;}
+.pw-ustatus{font-size:11px;color:#64748b;}
+.pw-body{display:flex;flex-direction:column;gap:10px;}
+.pw-row{display:flex;gap:8px;align-items:center;}
+.pw-wrap{position:relative;flex:1;display:flex;align-items:center;}
+.pw-wrap input{width:100%;padding-right:36px;}
+.pw-input{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:#e2e8f0;padding:9px 12px;border-radius:8px;font-family:'Courier New',monospace;font-size:12px;outline:none;transition:border-color .2s;}
+.pw-input:focus{border-color:#3b82f6;}
+.pw-input::placeholder{color:#334155;}
+.eye-btn{position:absolute;right:8px;background:none;border:none;cursor:pointer;color:#475569;font-size:14px;padding:2px 4px;line-height:1;transition:color .2s;}
+.eye-btn:hover{color:#e2e8f0;}
+.btn-save-sm{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;border:none;padding:9px 16px;border-radius:8px;cursor:pointer;font-weight:700;font-size:12px;white-space:nowrap;transition:opacity .2s;font-family:'Courier New',monospace;}
+.btn-save-sm:hover{opacity:.85;}
+.btn-del-sm{background:transparent;border:1px solid rgba(239,68,68,.4);color:#f87171;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:12px;transition:all .2s;text-align:center;width:100%;font-family:'Courier New',monospace;}
+.btn-del-sm:hover{background:rgba(239,68,68,.1);}
+.btn-flogout-sm{background:transparent;border:1px solid rgba(245,158,11,.4);color:#f59e0b;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:12px;transition:all .2s;text-align:center;width:100%;font-family:'Courier New',monospace;font-weight:700;}
+.btn-flogout-sm:hover{background:rgba(245,158,11,.1);}
+.btn-flogout-sm:disabled{opacity:.4;cursor:not-allowed;}
+.pw-msg{font-size:11px;min-height:14px;font-family:'Courier New',monospace;}
+.pw-msg.ok{color:#4ade80;}.pw-msg.err{color:#f87171;}
+.stored-pw{font-family:'Courier New',monospace;font-size:11px;color:#22c55e;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:6px;padding:5px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;}
+.stored-pw-label{font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
+.stored-pw-val{letter-spacing:2px;}
+.add-box{background:rgba(34,197,94,.04);border:1px dashed rgba(34,197,94,.3);border-radius:14px;padding:22px;margin-bottom:24px;}
+.add-box-title{font-size:11px;font-weight:700;color:#22c55e;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
+.add-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start;}
+.add-input{flex:1;min-width:130px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:#e2e8f0;padding:10px 14px;border-radius:8px;font-family:'Courier New',monospace;font-size:13px;outline:none;transition:border-color .2s;}
+.add-input:focus{border-color:#22c55e;}
+.add-input::placeholder{color:#334155;}
+.btn-add{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;border:none;padding:10px 22px;border-radius:8px;cursor:pointer;font-weight:700;font-size:12px;white-space:nowrap;font-family:'Courier New',monospace;}
+.btn-add:hover{filter:brightness(1.1);}
+.fmsg{font-size:11px;min-height:14px;font-family:'Courier New',monospace;margin-top:8px;}
+.fmsg.ok{color:#4ade80;}.fmsg.err{color:#f87171;}
+
+/* ── USER LIMIT ── */
+.user-limit-box{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:11px 14px;}
+.user-limit-label{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+.user-limit-label span{color:#e2e8f0;font-size:11px;font-family:'Courier New',monospace;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:5px;padding:1px 8px;}
+.limit-btns{display:flex;gap:5px;flex-wrap:wrap;}
+.limit-btn{width:34px;height:30px;border-radius:7px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#64748b;font-family:'Courier New',monospace;font-size:13px;font-weight:700;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;}
+.limit-btn:hover{border-color:#3b82f6;color:#e2e8f0;}
+.limit-btn.active{background:#3b82f6;color:#fff;border-color:#3b82f6;}
+.limit-count-bar{margin-top:8px;display:flex;align-items:center;gap:6px;font-size:11px;color:#64748b;font-family:'Courier New',monospace;}
+.limit-dots{display:flex;gap:4px;}
+.limit-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.1);transition:background .2s;}
+.limit-dot.used{background:#22c55e;}
+
+/* ── DEVICE LICENSE CARDS ── */
+.lic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;margin-bottom:24px;}
+.lic-card{background:rgba(13,21,32,.9);border:1px solid rgba(59,130,246,.12);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;transition:border-color .2s;}
+.lic-card.approved{border-left:3px solid #22c55e;}
+.lic-card.revoked{border-left:3px solid #ef4444;opacity:.7;}
+.lic-card.pending{border-left:3px solid #f59e0b;}
+.lic-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.lic-id{font-family:'Courier New',monospace;font-size:11px;color:#64748b;word-break:break-all;flex:1;}
+.lic-badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+.lic-badge.approved{background:rgba(34,197,94,.12);color:#4ade80;}
+.lic-badge.revoked{background:rgba(239,68,68,.12);color:#f87171;}
+.lic-badge.pending{background:rgba(245,158,11,.12);color:#fb923c;}
+.lic-meta{font-size:11px;color:#64748b;line-height:1.7;}
+.lic-meta span{color:#94a3b8;}
+.lic-actions{display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;}
+.lic-btn{padding:5px 14px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:opacity .15s;font-family:'Courier New',monospace;}
+.lic-btn:hover{opacity:.8;}
+.lic-btn.approve{background:#22c55e;color:#000;}
+.lic-btn.revoke{background:#ef4444;color:#fff;}
+.lic-btn.delete{background:rgba(255,255,255,.06);color:#64748b;border:1px solid rgba(255,255,255,.1);}
+.sec-empty{text-align:center;padding:32px;color:#475569;font-size:13px;background:rgba(13,21,32,.8);border:1px solid rgba(59,130,246,.12);border-radius:12px;}
+</style>
+</head>
+<body>
+<div class="bg-layer">
+  <div class="bg-grad"></div>
+  <div class="bg-grid"></div>
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+</div>
+
+<div class="wrap">
+  <div class="topbar">
+    <div class="topbar-logo">⚡ TRP Admin</div>
+    <div class="topbar-sep"></div>
+    <div class="topbar-sub">TextReplace Pro — Control Panel</div>
+    <div class="topbar-badge offline" id="fb-status-badge">⬤ Connecting…</div>
+  </div>
+
+  <!-- LOGIN REMOVED -->
+
+
+  <!-- DASHBOARD -->
+  <div id="dashboard">
+    <div class="dash-inner">
+      <div class="user-row">
+        <span class="user-dot"></span>
+        <span class="user-tag">Logged in as</span>
+        <span class="user-name" id="dash-username">—</span>
+      </div>
+
+      <div class="tab-nav">
+        <button class="tab-btn active" id="tab-btn-mappings" onclick="switchTab('mappings')">📋 Number Mappings</button>
+        <button class="tab-btn" id="tab-btn-activity" onclick="switchTab('activity')">📊 Activity Log</button>
+        <button class="tab-btn" id="tab-btn-users" onclick="switchTab('users')">👤 User &amp; Password</button>
+        <button class="tab-btn" id="tab-btn-security" onclick="switchTab('security')">🔒 Security</button>
+      </div>
+
+      <!-- ═══ TAB: NUMBER MAPPINGS ═══ -->
+      <div class="tab-panel active" id="panel-mappings">
+        <div class="stats-grid">
+          <div class="stat-card blue"><div class="stat-label">Total Mappings</div><div class="stat-val" id="m-total">—</div><div class="stat-sub">Active number rules</div></div>
+          <div class="stat-card green"><div class="stat-label">With Replacement</div><div class="stat-val" id="m-filled">—</div><div class="stat-sub">Populated entries</div></div>
+          <div class="stat-card amber"><div class="stat-label">Catch-All Rules</div><div class="stat-val" id="m-catchall">—</div><div class="stat-sub">Blank prefix mappings</div></div>
+          <div class="stat-card"><div class="stat-label">Last Updated</div><div class="stat-val" id="m-updated" style="font-size:14px;margin-top:6px;">—</div><div class="stat-sub">By <span id="m-updatedby">—</span></div></div>
+        </div>
+        <div class="section">
+          <div class="section-title" style="display:flex;width:100%;">📞 Current Number Mappings<button class="refresh-btn" onclick="loadMappings()">↻ Refresh</button></div>
+          <div style="overflow-x:auto;">
+            <table class="tbl"><thead><tr><th>#</th><th>Prefix / Find</th><th>Replacement Number(s)</th><th>Type</th></tr></thead>
+            <tbody id="maps-tbody"><tr><td colspan="4" class="tbl-empty"><span class="spinner"></span>Loading…</td></tr></tbody></table>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section-title">🔥 Firebase Data Path</div>
+          <div class="db-info-row"><span class="key">Mappings path:</span><code>tool_data/number_mappings</code></div>
+          <div class="db-info-row" style="margin-top:6px;"><span class="key">Database URL:</span><code style="color:#3b82f6;">https://numbertoolchanger-default-rtdb.firebaseio.com/</code></div>
+          <div class="db-warn">⚠ Number mappings sync from the tool automatically when saved. Open the tool, configure your mappings, and they will appear here in real-time.</div>
+        </div>
+      </div>
+
+      <!-- ═══ TAB: ACTIVITY LOG ═══ -->
+      <div class="tab-panel" id="panel-activity">
+        <div class="stats-grid">
+          <div class="stat-card green"><div class="stat-label">Total Logins</div><div class="stat-val" id="stat-logins">—</div><div class="stat-sub">All time successful</div></div>
+          <div class="stat-card red"><div class="stat-label">Failed Attempts</div><div class="stat-val" id="stat-fails">—</div><div class="stat-sub">Blocked attacks</div></div>
+          <div class="stat-card blue"><div class="stat-label">App Opens</div><div class="stat-val" id="stat-opens">—</div><div class="stat-sub">Tool usage count</div></div>
+          <div class="stat-card amber"><div class="stat-label">Last Login</div><div class="stat-val" id="stat-lastlogin" style="font-size:13px;margin-top:6px;">—</div><div class="stat-sub">Most recent access</div></div>
+        </div>
+        <div class="section">
+          <div class="section-title" style="display:flex;width:100%;">📋 Number Mapping Activity<button class="refresh-btn" onclick="loadMappingActivity()">↻ Refresh</button></div>
+          <div style="overflow-x:auto;">
+            <table class="tbl"><thead><tr><th>#</th><th>Event</th><th>Prefix</th><th>Replacement</th><th>Date / Time</th></tr></thead>
+            <tbody id="mapact-tbody"><tr><td colspan="5" class="tbl-empty"><span class="spinner"></span>Loading…</td></tr></tbody></table>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section-title" style="display:flex;width:100%;">🔑 Recent Login Activity<button class="refresh-btn" onclick="loadLoginLogs()">↻ Refresh</button></div>
+          <div style="overflow-x:auto;">
+            <table class="tbl"><thead><tr><th>#</th><th>User (hashed)</th><th>Status</th><th>Date / Time</th></tr></thead>
+            <tbody id="login-tbody"><tr><td colspan="4" class="tbl-empty"><span class="spinner"></span>Loading…</td></tr></tbody></table>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section-title">⚙ Log Management</div>
+          <div class="btn-row"><button class="save-btn amber" onclick="clearStats()">🗑 Clear All Stats &amp; Logs</button></div>
+          <div class="adm-msg" id="stats-msg"></div>
+        </div>
+      </div>
+
+      <!-- ═══ TAB: USER & PASSWORD ═══ -->
+      <div class="tab-panel" id="panel-users">
+
+        <!-- Add new user -->
+        <div class="add-box">
+          <div class="add-box-title">🔑 Change Tool Login Credentials</div>
+          <div style="font-size:11px;color:#64748b;margin-bottom:12px;font-family:'Courier New',monospace;">Update the username &amp; password used to log into TextReplace Pro. The user will be logged out immediately.</div>
+          <div class="add-row">
+            <input class="add-input" id="newName" placeholder="New Username" autocomplete="off" autocorrect="off" autocapitalize="off"/>
+            <div style="position:relative;flex:1;min-width:140px;">
+              <input class="add-input" id="newPass" type="password" placeholder="Password (min 6 chars)" autocomplete="new-password" style="width:100%;padding-right:38px;"/>
+              <button class="eye-btn" type="button" onclick="toggleEye('newPass',this)" style="right:10px;top:50%;transform:translateY(-50%);position:absolute;">👁</button>
+            </div>
+            <button class="btn-add" onclick="addUser()">Add User</button>
+          </div>
+          <div class="fmsg" id="addMsg"></div>
+        </div>
+
+        <!-- Existing users -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+          <div style="font-size:11px;font-weight:700;color:#3b82f6;text-transform:uppercase;letter-spacing:1.5px;">Managed Accounts — Change Password or Delete</div>
+          <button onclick="rehashAllPasswords()" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;border:none;padding:7px 16px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:700;font-family:'Courier New',monospace;">⟳ Fix Password Hashes</button>
+        </div>
+        <div id="rehashMsg" style="font-size:11px;margin-bottom:8px;color:#4ade80;display:none;font-family:'Courier New',monospace;"></div>
+        <div class="pw-grid" id="pwGrid">
+          <div class="sec-empty"><span class="spinner"></span>Loading users…</div>
+        </div>
+
+        <!-- Global session control -->
+        <div class="section">
+          <div class="section-title">⚡ Global Session Control</div>
+          <div class="btn-row">
+            <button class="save-btn red" onclick="forceLogoutAll()">🔒 Force Logout All Users</button>
+          </div>
+          <div class="adm-msg" id="session-msg"></div>
+        </div>
+
+        <!-- Online users table -->
+        <div class="section">
+          <div class="section-title" style="display:flex;width:100%;">🟢 Online Users<button class="refresh-btn" onclick="loadOnlineUsers()">↻ Refresh</button></div>
+          <div style="overflow-x:auto;">
+            <table class="tbl"><thead><tr><th>#</th><th>Session ID</th><th>User</th><th>Last Active</th><th>Status</th></tr></thead>
+            <tbody id="online-tbody"><tr><td colspan="5" class="tbl-empty"><span class="spinner"></span>Loading…</td></tr></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ TAB: SECURITY ═══ -->
+      <div class="tab-panel" id="panel-security">
+
+        <!-- Device Licenses -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#3b82f6;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px;">🖥️ Device Licenses</div>
+            <div style="font-size:11px;color:#64748b;font-family:'Courier New',monospace;">Registered devices — approve or revoke access. Devices auto-register on first login attempt.</div>
+          </div>
+          <button class="refresh-btn" style="margin-left:0;" onclick="loadLicenses()">↻ Refresh</button>
+        </div>
+        <div class="lic-grid" id="licenseGrid">
+          <div class="sec-empty">Click Refresh or switch to this tab to load…</div>
+        </div>
+
+        <!-- Security Features Status -->
+        <div class="section">
+          <div class="section-title">🛡 Security Features Status</div>
+          <div class="sec-list">
+            <div class="sec-item"><div class="sec-icon">🔐</div><div><div class="sec-label">SHA-256 Password Hashing</div><div class="sec-desc">All credentials are hashed client-side using SHA-256 before being stored in Firebase. Plaintext passwords are never stored.</div></div><div class="sec-status"><span class="badge badge-ok">ACTIVE</span></div></div>
+            <div class="sec-item"><div class="sec-icon">🕐</div><div><div class="sec-label">Session Expiry (4 hours)</div><div class="sec-desc">User sessions automatically expire after 4 hours. Sessions are signed with a cryptographic token to prevent tampering.</div></div><div class="sec-status"><span class="badge badge-ok">ACTIVE</span></div></div>
+            <div class="sec-item"><div class="sec-icon">🚫</div><div><div class="sec-label">Brute Force Lockout</div><div class="sec-desc">Accounts are locked for 30 minutes after 5 consecutive failed login attempts. Failed attempts are logged to Firebase.</div></div><div class="sec-status"><span class="badge badge-ok">ACTIVE</span></div></div>
+            <div class="sec-item"><div class="sec-icon">🖥️</div><div><div class="sec-label">Device License Approval</div><div class="sec-desc">New devices must be approved by the admin before they can log in. Devices auto-register on first login attempt and remain pending until approved.</div></div><div class="sec-status"><span class="badge badge-ok">ACTIVE</span></div></div>
+            <div class="sec-item"><div class="sec-icon">🔍</div><div><div class="sec-label">DevTools Detection</div><div class="sec-desc">The tool detects open browser developer tools and blurs/blocks the interface to prevent inspection and code extraction.</div></div><div class="sec-status"><span class="badge badge-ok">ACTIVE</span></div></div>
+            <div class="sec-item"><div class="sec-icon">📋</div><div><div class="sec-label">Right-Click &amp; Copy Protection</div><div class="sec-desc">Context menus, text selection, Ctrl+U (view source), Ctrl+S (save), and drag operations are all disabled.</div></div><div class="sec-status"><span class="badge badge-ok">ACTIVE</span></div></div>
+            <div class="sec-item"><div class="sec-icon">🔥</div><div><div class="sec-label">Firebase Realtime Sync</div><div class="sec-desc">Credentials and session data sync in real-time via Firebase. Credential changes and force-logout propagate instantly to all sessions.</div></div><div class="sec-status"><span class="badge" id="fb-sec-badge" style="background:rgba(245,158,11,.15);color:#f59e0b;border:1px solid rgba(245,158,11,.2);">CHECKING…</span></div></div>
+            <div class="sec-item"><div class="sec-icon">🔑</div><div><div class="sec-label">Debugger Trap</div><div class="sec-desc">A debugger trap runs every 3 seconds. If developer tools are actively used to step through code, the tool interface is wiped.</div></div><div class="sec-status"><span class="badge badge-ok">ACTIVE</span></div></div>
+          </div>
+        </div>
+
+        <!-- Firebase info -->
+        <div class="section">
+          <div class="section-title">🔥 Firebase Database</div>
+          <div class="db-info-row"><span class="key">Database URL:</span><code style="color:#3b82f6;">https://numbertoolchanger-default-rtdb.firebaseio.com/</code></div>
+          <div class="db-info-row" style="margin-top:6px;"><span class="key">Credentials path:</span><code>tool_auth/credentials</code></div>
+          <div class="db-info-row" style="margin-top:6px;"><span class="key">Users path:</span><code>tool_auth/users</code></div>
+          <div class="db-info-row" style="margin-top:6px;"><span class="key">Licenses path:</span><code>tool_auth/licenses</code></div>
+          <div class="db-info-row" style="margin-top:6px;"><span class="key">Stats path:</span><code>tool_auth/stats</code></div>
+          <div class="db-warn">⚠ <strong>Recommended:</strong> Set Firebase security rules to restrict read/write to authenticated users only. Current rules may be open to the public.<br><br>Suggested rule: <code style="color:#f59e0b;">"auth != null"</code> — or restrict by IP/domain for production use.</div>
+        </div>
+
+        <!-- Emergency controls -->
+        <div class="section">
+          <div class="section-title">⚡ Emergency Controls</div>
+          <div class="btn-row">
+            <button class="save-btn red" onclick="forceLogoutAll()">🔒 Force Logout All Users</button>
+            <button class="save-btn amber" onclick="clearStats()">🗑 Clear All Logs</button>
+          </div>
+          <div class="adm-msg" id="sec-msg"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-app-compat.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-database-compat.min.js"></script>
+<script>
+'use strict';
+
+// ═══ FIREBASE ═══
+var FB_CONFIG = { databaseURL: 'https://numbertoolchanger-default-rtdb.firebaseio.com/' };
+var db = null;
+var _fbReady = false;
+
+try {
+  if (!firebase.apps.length) firebase.initializeApp(FB_CONFIG);
+  db = firebase.database();
+  _fbReady = true;
+  document.getElementById('fb-status-badge').textContent = '⬤ Firebase Connected';
+  document.getElementById('fb-status-badge').className = 'topbar-badge';
+  document.getElementById('fb-sec-badge').textContent = 'CONNECTED';
+  document.getElementById('fb-sec-badge').className = 'badge badge-ok';
+} catch(e) {
+  document.getElementById('fb-status-badge').textContent = '⬤ Firebase Offline';
+  document.getElementById('fb-sec-badge').textContent = 'OFFLINE';
+  document.getElementById('fb-sec-badge').style.cssText = 'background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.2);';
+}
+
+// ═══ FIREBASE HELPERS ═══
+var FB_URL = 'https://numbertoolchanger-default-rtdb.firebaseio.com';
+var fGet  = function(p){ return fetch(FB_URL+'/'+p+'.json').then(function(r){return r.json();}); };
+var fPut  = function(p,v){ return fetch(FB_URL+'/'+p+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(v)}); };
+var fPatch= function(p,v){ return fetch(FB_URL+'/'+p+'.json',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(v)}); };
+var fDel  = function(p){ return fetch(FB_URL+'/'+p+'.json',{method:'DELETE'}); };
+
+// ═══ SHA-256 ═══
+async function sha256(str) {
+  var buf = new TextEncoder().encode(str);
+  var hash = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(hash)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+}
+var PW_SALT = 'TRP_s3cur3_2025_@#$';
+async function hashPassword(pw, username) {
+  return sha256(PW_SALT + (username||'').toLowerCase().trim() + (pw||'').trim());
+}
+
+// ═══ CREDS / SESSION ═══
+var CREDS_PATH = 'tool_auth/credentials';    // Tool single-cred: {u: sha256user, p: sha256pass}
+var STATS_PATH = 'tool_auth/stats';
+var USERS_PATH = 'tool_auth/users';
+var LIC_PATH   = 'tool_auth/licenses';
+var ADMINPW_PATH = 'tool_auth/admin_passwords'; // Admin plain-text store: {username: plainpass}
+var USERS_LIST_PATH = 'tool_auth/users_list';   // Multi-user list: {username: {hash, plain}}
+var _credMap = {};
+var _plainPwMap = {};
+var _userLimitMap = {};
+
+// Login removed — panel opens straight to the dashboard.
+function showDashboard(user){
+  document.getElementById('dashboard').className='show';
+  document.getElementById('dash-username').textContent=user;
+  loadMappings();loadStats();loadLoginLogs();loadMappingActivity();loadOnlineUsers();loadPwGrid();
+}
+
+// ═══ TABS ═══
+function switchTab(name){
+  ['mappings','activity','users','security'].forEach(function(t){
+    document.getElementById('tab-btn-'+t).className='tab-btn'+(t===name?' active':'');
+    document.getElementById('panel-'+t).className='tab-panel'+(t===name?' active':'');
+  });
+  if(name==='security') loadLicenses();
+  if(name==='users') loadPwGrid();
+}
+
+// ═══ MAPPINGS ═══
+function loadMappings(){
+  var tbody=document.getElementById('maps-tbody');
+  tbody.innerHTML='<tr><td colspan="4" class="tbl-empty"><span class="spinner"></span>Loading…</td></tr>';
+  if(!db){tbody.innerHTML='<tr><td colspan="4" class="tbl-empty">Firebase not connected.</td></tr>';return;}
+  db.ref('tool_data/number_mappings').once('value').then(function(snap){
+    var data=snap.val();
+    if(!data||!data.maps||!data.maps.length){tbody.innerHTML='<tr><td colspan="4" class="tbl-empty">No mappings found.</td></tr>';document.getElementById('m-total').textContent='0';document.getElementById('m-filled').textContent='0';document.getElementById('m-catchall').textContent='0';return;}
+    var maps=data.maps;
+    document.getElementById('m-total').textContent=maps.length;
+    document.getElementById('m-filled').textContent=maps.filter(function(m){return m.replace&&m.replace.trim();}).length;
+    document.getElementById('m-catchall').textContent=maps.filter(function(m){return !m.find||!m.find.trim();}).length;
+    if(data.updated){var d=new Date(data.updated);document.getElementById('m-updated').textContent=d.toLocaleDateString()+' '+d.toLocaleTimeString();}
+    if(data.updatedBy){document.getElementById('m-updatedby').textContent=data.updatedBy;}
+    tbody.innerHTML=maps.map(function(m,i){
+      var find=eh(m.find||'');var rep=eh(m.replace||'');var isCatchAll=!m.find||!m.find.trim();var hasFill=m.replace&&m.replace.trim();
+      var badge=isCatchAll?'<span class="badge" style="background:rgba(245,158,11,.15);color:#f59e0b;border:1px solid rgba(245,158,11,.2);">CATCH-ALL</span>':'<span class="badge badge-blue">PREFIX</span>';
+      return '<tr><td style="color:#334155;">'+(i+1)+'</td><td><span class="code">'+(isCatchAll?'<span style="color:#475569;font-style:italic;">(any number)</span>':find)+'</span></td><td><span class="code">'+(hasFill?rep:'<span style="color:#334155;font-style:italic;">—</span>')+'</span></td><td>'+badge+'</td></tr>';
+    }).join('');
+  }).catch(function(e){tbody.innerHTML='<tr><td colspan="4" class="tbl-empty">Failed: '+eh(e.message)+'</td></tr>';});
+}
+
+// ═══ STATS ═══
+function loadStats(){
+  if(!db)return;
+  db.ref(STATS_PATH+'/counters').on('value',function(snap){
+    var c=snap.val()||{};
+    document.getElementById('stat-logins').textContent=c.totalLogins||0;
+    document.getElementById('stat-fails').textContent=c.failedAttempts||0;
+    if(c.lastLogin){var d=new Date(c.lastLogin);document.getElementById('stat-lastlogin').textContent=d.toLocaleDateString()+' '+d.toLocaleTimeString();}
+  });
+  db.ref(STATS_PATH+'/usage/appOpen').on('value',function(snap){document.getElementById('stat-opens').textContent=snap.val()||0;});
+}
+
+function loadLoginLogs(){
+  var tbody=document.getElementById('login-tbody');
+  tbody.innerHTML='<tr><td colspan="4" class="tbl-empty"><span class="spinner"></span>Loading…</td></tr>';
+  if(!db){tbody.innerHTML='<tr><td colspan="4" class="tbl-empty">Firebase not connected.</td></tr>';return;}
+  db.ref(STATS_PATH+'/logins').limitToLast(30).once('value').then(function(snap){
+    var data=snap.val();
+    if(!data){tbody.innerHTML='<tr><td colspan="4" class="tbl-empty">No login records yet.</td></tr>';return;}
+    var rows=Object.values(data).reverse();
+    tbody.innerHTML=rows.map(function(r,i){
+      var d=new Date(r.timestamp);var dt=d.toLocaleDateString()+' '+d.toLocaleTimeString();
+      var badge=r.success?'<span class="badge badge-ok">✓ SUCCESS</span>':'<span class="badge badge-fail">✗ FAILED</span>';
+      return '<tr><td style="color:#334155;">'+(i+1)+'</td><td style="font-family:monospace;font-size:11px;">'+eh(r.username||'—')+'</td><td>'+badge+'</td><td style="font-size:11px;">'+dt+'</td></tr>';
+    }).join('');
+  }).catch(function(){tbody.innerHTML='<tr><td colspan="4" class="tbl-empty">Failed to load logs.</td></tr>';});
+}
+
+function loadMappingActivity(){
+  var tbody=document.getElementById('mapact-tbody');
+  tbody.innerHTML='<tr><td colspan="5" class="tbl-empty"><span class="spinner"></span>Loading…</td></tr>';
+  if(!db){tbody.innerHTML='<tr><td colspan="5" class="tbl-empty">Firebase not connected.</td></tr>';return;}
+  db.ref('tool_data/mapping_history').limitToLast(20).once('value').then(function(snap){
+    var data=snap.val();
+    if(!data){
+      db.ref('tool_data/number_mappings').once('value').then(function(s2){
+        var cur=s2.val();
+        if(cur&&cur.maps&&cur.updated){
+          var d=new Date(cur.updated);
+          tbody.innerHTML=cur.maps.map(function(m,i){return '<tr><td style="color:#334155;">'+(i+1)+'</td><td><span class="badge badge-blue">SAVED</span></td><td><span class="code">'+(m.find?eh(m.find):'(catch-all)')+'</span></td><td><span class="code">'+(m.replace?eh(m.replace):'—')+'</span></td><td style="font-size:11px;">'+d.toLocaleDateString()+' '+d.toLocaleTimeString()+'</td></tr>';}).join('')||'<tr><td colspan="5" class="tbl-empty">No mapping activity yet.</td></tr>';
+        }else{tbody.innerHTML='<tr><td colspan="5" class="tbl-empty">No mapping activity yet.</td></tr>';}
+      });
+      return;
+    }
+    tbody.innerHTML=Object.values(data).reverse().slice(0,20).map(function(r,i){
+      var d=new Date(r.timestamp||0);
+      return '<tr><td style="color:#334155;">'+(i+1)+'</td><td><span class="badge badge-blue">SAVED</span></td><td><span class="code">'+(r.find?eh(r.find):'(catch-all)')+'</span></td><td><span class="code">'+(r.replace?eh(r.replace):'—')+'</span></td><td style="font-size:11px;">'+d.toLocaleDateString()+' '+d.toLocaleTimeString()+'</td></tr>';
+    }).join('');
+  }).catch(function(){tbody.innerHTML='<tr><td colspan="5" class="tbl-empty">Failed to load activity.</td></tr>';});
+}
+
+function loadOnlineUsers(){
+  var tbody=document.getElementById('online-tbody');
+  tbody.innerHTML='<tr><td colspan="5" class="tbl-empty"><span class="spinner"></span>Loading…</td></tr>';
+  if(!db){tbody.innerHTML='<tr><td colspan="5" class="tbl-empty">Firebase not connected.</td></tr>';return;}
+  db.ref('tool_auth/online_sessions').once('value').then(function(snap){
+    var data=snap.val();
+    if(!data||!Object.keys(data).length){tbody.innerHTML='<tr><td colspan="5" class="tbl-empty">No active sessions found.</td></tr>';return;}
+    var sessions=Object.entries(data);var now=Date.now();
+    tbody.innerHTML=sessions.map(function(kv,i){
+      var sid=kv[0];var s=kv[1];var active=s.lastSeen&&(now-s.lastSeen)<300000;
+      var d=new Date(s.lastSeen||s.joinedAt||now);
+      var badge=active?'<span class="badge badge-ok">ONLINE</span>':'<span style="background:rgba(100,116,139,.15);color:#475569;border:1px solid rgba(100,116,139,.2);" class="badge">IDLE</span>';
+      return '<tr><td style="color:#334155;">'+(i+1)+'</td><td style="font-family:monospace;font-size:10px;">'+eh(sid.slice(0,12))+'…</td><td style="font-family:monospace;font-size:11px;">'+eh(s.user||'—')+'</td><td style="font-size:11px;">'+d.toLocaleTimeString()+'</td><td>'+badge+'</td></tr>';
+    }).join('');
+  }).catch(function(){tbody.innerHTML='<tr><td colspan="5" class="tbl-empty">Failed to load sessions.</td></tr>';});
+}
+
+// ═══ GLOBAL CREDS (change single u/p) ═══
+function checkStrength(pw){
+  var bar=document.getElementById('str-bar');if(!bar)return;
+  if(!pw){bar.style.width='0%';return;}
+  var s=0;if(pw.length>=6)s++;if(pw.length>=10)s++;if(/[A-Z]/.test(pw))s++;if(/[0-9]/.test(pw))s++;if(/[^A-Za-z0-9]/.test(pw))s++;
+  bar.style.width=['20%','40%','60%','80%','100%'][Math.min(s,4)];
+  bar.style.background=['#ef4444','#f97316','#f59e0b','#22c55e','#10b981'][Math.min(s,4)];
+}
+
+function forceLogoutAll(){
+  if(!confirm('Force logout will invalidate all current user sessions. Continue?'))return;
+  var msgIds=['session-msg','sec-msg'];
+  if(!db){msgIds.forEach(function(id){showMsg(id,'⚠ Firebase not connected.','err');});return;}
+  db.ref('tool_auth/session_salt').set({val:Math.random().toString(36).slice(2),ts:Date.now()}).then(function(){
+    // Also wipe session records so the count resets in the admin panel
+    db.ref('tool_auth/online_sessions').remove();
+    msgIds.forEach(function(id){showMsg(id,'✓ All user sessions have been invalidated.','ok');});
+  }).catch(function(e){msgIds.forEach(function(id){showMsg(id,'⚠ Failed: '+e.message,'err');});});
+}
+
+function clearStats(){
+  if(!confirm('Clear all stats and login logs? This cannot be undone.'))return;
+  var msgIds=['stats-msg','sec-msg'];
+  if(!db){msgIds.forEach(function(id){showMsg(id,'⚠ Firebase not connected.','err');});return;}
+  db.ref(STATS_PATH).remove().then(function(){
+    msgIds.forEach(function(id){showMsg(id,'✓ Stats and logs cleared.','ok');});
+    ['stat-logins','stat-fails','stat-opens'].forEach(function(id){document.getElementById(id).textContent='0';});
+    document.getElementById('stat-lastlogin').textContent='—';
+    document.getElementById('login-tbody').innerHTML='<tr><td colspan="4" class="tbl-empty">No records.</td></tr>';
+  }).catch(function(e){msgIds.forEach(function(id){showMsg(id,'⚠ Failed: '+e.message,'err');});});
+}
+
+// ═══ USER & PASSWORD GRID ═══
+async function _silentRefreshPwGrid(){
+  // Refresh session counts and online status without wiping the grid UI
+  try{
+    var sessions=await fGet('tool_auth/online_sessions');
+    var now=Date.now();
+    var sessionCounts={};var onlineUsers={};
+    if(sessions&&typeof sessions==='object'){
+      Object.entries(sessions).forEach(function(kv){
+        var s=kv[1];var user=(s.user||'').toLowerCase();if(!user)return;
+        var active=s.lastSeen&&(now-s.lastSeen)<120000;
+        if(active){sessionCounts[user]=(sessionCounts[user]||0)+1;onlineUsers[user]=true;}
+      });
+    }
+    // Update each visible user card
+    Object.keys(_credMap).forEach(function(uname){
+      var uid='uid_'+uname.replace(/[^a-z0-9]/gi,'_');
+      var key=uname.toLowerCase();
+      var isOnline=onlineUsers[key]||false;
+      var activeSessions=sessionCounts[key]||0;
+      var limit=_userLimitMap[key]||1;
+      var statusEl=document.querySelector('#'+uid+' .pw-ustatus');
+      if(statusEl){
+        statusEl.style.color=isOnline?'#22c55e':'#64748b';
+        statusEl.textContent=(isOnline?'●':'○')+' '+(isOnline?'Online':'Offline');
+      }
+      var limstatEl=document.getElementById(uid+'_limstat');
+      if(limstatEl){limstatEl.textContent=activeSessions+' active · max '+limit;}
+      // Update dots
+      var dotsEl=document.getElementById(uid+'_dots');
+      if(dotsEl){
+        dotsEl.innerHTML=Array.from({length:5},function(_,i){
+          var cls='limit-dot';if(i<limit&&i<activeSessions)cls+=' used';
+          return '<div class="'+cls+'"></div>';
+        }).join('');
+      }
+    });
+  }catch(e){}
+}
+
+var _pwGridInterval=null;
+async function loadPwGrid(){
+  var grid=document.getElementById('pwGrid');
+  grid.innerHTML='<div class="sec-empty"><span class="spinner"></span>Loading users…</div>';
+  // Auto-refresh every 35s to pick up heartbeats from the tool (heartbeat = 30s)
+  if(!_pwGridInterval){
+    _pwGridInterval=setInterval(function(){
+      // Silent refresh — don't show spinner, just update data
+      _silentRefreshPwGrid();
+    },35000);
+  }
+  try{
+    var [usersList,plainPws,limits,sessions] = await Promise.all([
+      fGet(USERS_LIST_PATH),
+      fGet(ADMINPW_PATH),
+      fGet('tool_auth/user_limits'),
+      fGet('tool_auth/online_sessions')
+    ]);
+    var onlineData = sessions; // online_sessions has user + lastSeen — use for both checks
+    // USERS_LIST_PATH stores {username: hashedPassword} for multi-user management
+    // If empty, try to seed from plain-text store
+    _credMap = usersList && typeof usersList==='object' && !Array.isArray(usersList) ? usersList : {};
+    _plainPwMap = plainPws && typeof plainPws==='object' ? plainPws : {};
+    _userLimitMap = limits && typeof limits==='object' ? limits : {};
+
+    // Count active sessions and determine online status from online_sessions
+    var sessionCounts={};
+    var onlineUsers={};
+    var now=Date.now();
+    if(sessions&&typeof sessions==='object'){
+      Object.entries(sessions).forEach(function(kv){
+        var s=kv[1];
+        var user=(s.user||'').toLowerCase();
+        if(!user) return;
+        // Active = seen within last 2 minutes (heartbeat runs every 30s in tool)
+        var active=s.lastSeen&&(now-s.lastSeen)<120000;
+        if(active){
+          sessionCounts[user]=(sessionCounts[user]||0)+1;
+          onlineUsers[user]=true;
+        }
+      });
+    }
+
+    var users=Object.keys(_credMap);
+    if(!users.length){grid.innerHTML='<div class="sec-empty">No users found. Add one above.</div>';return;}
+
+    grid.innerHTML=users.map(function(uname){
+      var uid='uid_'+uname.replace(/[^a-z0-9]/gi,'_');
+      var init=uname.slice(0,2).toUpperCase();
+      var storedPlain=_plainPwMap[uname.toLowerCase()]||_plainPwMap[uname]||'';
+      var currentLimit=_userLimitMap[uname.toLowerCase()]||_userLimitMap[uname]||1;
+      var activeSessions=sessionCounts[uname.toLowerCase()]||0;
+      var isOnline=onlineUsers[uname.toLowerCase()]||activeSessions>0;
+      var statusDot=isOnline?'●':'○';
+      var statusText=isOnline?'Online':'Offline';
+      var statusColor=isOnline?'#22c55e':'#64748b';
+
+      var dotsHtml=Array.from({length:5},function(_,i){
+        var cls='limit-dot';if(i<currentLimit&&i<activeSessions)cls+=' used';
+        return '<div class="'+cls+'" title="Slot '+(i+1)+(i>=currentLimit?' (locked)':i<activeSessions?' (active)':' (free)')+'"></div>';
+      }).join('');
+
+      var limitBtns=[1,2,3,4,5].map(function(n){
+        return '<button class="limit-btn'+(n===currentLimit?' active':'')+'" onclick="setUserLimit(\''+eh(uname)+'\',\''+uid+'\','+n+')" title="Allow '+n+' user'+(n>1?'s':'')+'">'+n+'</button>';
+      }).join('');
+
+      return '<div class="pw-card">'+
+        '<div class="pw-head">'+
+        '<div class="pw-av">'+init+'</div>'+
+        '<div><div class="pw-uname">'+eh(uname)+'</div>'+
+        '<div class="pw-ustatus" style="color:'+statusColor+'">'+statusDot+' '+statusText+'</div></div>'+
+        '</div>'+
+        '<div class="pw-body">'+
+        '<div style="font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px;">Stored Password</div>'+
+        '<div class="stored-pw">'+
+        '<div style="flex:1;min-width:0;">'+
+        '<div class="stored-pw-label">Current Password</div>'+
+        '<div class="stored-pw-val" id="'+uid+'_sp" data-plain="'+eh(storedPlain)+'" data-visible="false">••••••••</div>'+
+        '</div>'+
+        '<button type="button" onclick="toggleStoredPw(\''+uid+'_sp\',this)" style="background:none;border:1px solid rgba(34,197,94,.3);border-radius:5px;color:#22c55e;cursor:pointer;padding:3px 8px;font-size:12px;flex-shrink:0;">👁 Show</button>'+
+        '</div>'+
+        '<div style="font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.8px;margin-top:2px;">New Password</div>'+
+        '<div class="pw-row">'+
+        '<div class="pw-wrap"><input class="pw-input" id="'+uid+'_p" type="password" placeholder="Enter new password" autocomplete="new-password"><button class="eye-btn" type="button" onclick="toggleEye(\''+uid+'_p\',this)">👁</button></div>'+
+        '<button class="btn-save-sm" onclick="changePw(\''+eh(uname)+'\',\''+uid+'\')">Save</button>'+
+        '</div>'+
+        '<div class="user-limit-box">'+
+        '<div class="user-limit-label">👥 Max Users Allowed<span id="'+uid+'_limval">'+currentLimit+' / 5</span></div>'+
+        '<div class="limit-btns" id="'+uid+'_limitbtns">'+limitBtns+'</div>'+
+        '<div class="limit-count-bar"><div class="limit-dots" id="'+uid+'_dots">'+dotsHtml+'</div>'+
+        '<span id="'+uid+'_limstat" style="font-size:10px;color:#64748b;">'+activeSessions+' active · max '+currentLimit+'</span></div>'+
+        '<div class="pw-msg" id="'+uid+'_lm" style="margin-top:4px;"></div>'+
+        '</div>'+
+        '<button class="btn-flogout-sm" id="'+uid+'_lo" onclick="forceLogoutUser(\''+eh(uname)+'\',\''+uid+'\')">⏏ Force Logout</button>'+
+        '<button class="btn-flogout-sm" style="margin-top:6px;border-color:rgba(245,158,11,.3);color:#fbbf24;" id="'+uid+'_cs" onclick="clearStaleSessions(\''+eh(uname)+'\',\''+uid+'\')">🧹 Clear Stale Sessions</button>'+
+        '<button class="btn-del-sm" onclick="delUser(\''+eh(uname)+'\')">🗑 Delete this user</button>'+
+        '<div class="pw-msg" id="'+uid+'_m"></div>'+
+        '</div></div>';
+    }).join('');
+  }catch(e){grid.innerHTML='<div class="sec-empty">Error loading users: '+eh(e.message)+'</div>';}
+}
+
+async function forceLogoutUser(uname, uid){
+  var btn=document.getElementById(uid+'_lo');
+  var msg=document.getElementById(uid+'_m');
+  if(btn){btn.disabled=true;btn.textContent='⏳ Sending…';}
+  try{
+    var key=uname.toLowerCase().replace(/[.#$[\]]/g,'_');
+    // Write forceLogout flag to users node (tool can poll this)
+    await fPatch(USERS_PATH+'/'+key,{forceLogout:true,loggedOut:true,loggedOutAt:new Date().toISOString()});
+    // ALSO bump session_salt — tool checks the 'reason' to invalidate ONLY this user's session
+    if(db){
+      await db.ref('tool_auth/session_salt').set({val:Math.random().toString(36).slice(2),ts:Date.now(),reason:'force_logout_'+key});
+    }
+    if(btn){btn.textContent='✓ Logged out';btn.style.borderColor='#22c55e';btn.style.color='#22c55e';}
+    if(msg){msg.textContent='✓ Force logout sent — session invalidated immediately.';msg.className='pw-msg ok';}
+    setTimeout(function(){if(btn){btn.disabled=false;btn.textContent='⏏ Force Logout';btn.style.borderColor='';btn.style.color='';}if(msg){msg.textContent='';msg.className='pw-msg';}},5000);
+  }catch(e){
+    if(btn){btn.disabled=false;btn.textContent='⏏ Force Logout';}
+    if(msg){msg.textContent='✗ '+e.message;msg.className='pw-msg err';}
+  }
+}
+
+async function clearStaleSessions(uname,uid){
+  // Removes ALL online_sessions rows for this user immediately, regardless of
+  // lastSeen age. Use this when the session count looks wrong (e.g. browser
+  // crashed or was force-killed and never got a chance to clean up after itself).
+  var btn=document.getElementById(uid+'_cs');
+  var msg=document.getElementById(uid+'_m');
+  if(btn){btn.disabled=true;btn.textContent='⏳ Clearing…';}
+  try{
+    if(!db) throw new Error('Firebase not connected');
+    var unameLc=uname.toLowerCase();
+    var snap=await db.ref('tool_auth/online_sessions').once('value');
+    var d=snap.val()||{};
+    var removals=[];
+    Object.keys(d).forEach(function(k){
+      if((d[k].user||'').toLowerCase()===unameLc){
+        removals.push(db.ref('tool_auth/online_sessions/'+k).remove());
+      }
+    });
+    await Promise.all(removals);
+    if(btn){btn.textContent='✓ Cleared';btn.style.borderColor='#22c55e';btn.style.color='#22c55e';}
+    if(msg){msg.textContent='✓ Cleared '+removals.length+' stale session row(s).';msg.className='pw-msg ok';}
+    setTimeout(function(){if(btn){btn.disabled=false;btn.textContent='🧹 Clear Stale Sessions';btn.style.borderColor='';btn.style.color='';}if(msg){msg.textContent='';msg.className='pw-msg';}},4000);
+    loadPwGrid();
+  }catch(e){
+    if(btn){btn.disabled=false;btn.textContent='🧹 Clear Stale Sessions';}
+    if(msg){msg.textContent='✗ '+e.message;msg.className='pw-msg err';}
+  }
+}
+
+async function changePw(uname,uid){
+  var pi=document.getElementById(uid+'_p');var mi=document.getElementById(uid+'_m');
+  var pw=pi.value.trim();
+  if(pw.length<6){showPwMsg(mi,'⚠ Min 6 characters','err');return;}
+  showPwMsg(mi,'Hashing & saving…','');
+  try{
+    var hashed=await hashPassword(pw,uname);
+    // Save hashed to users_list (admin management list)
+    var listPatch={};listPatch[uname.toLowerCase()]=hashed;
+    await fPatch(USERS_LIST_PATH,listPatch);
+    // Write ONLY to this user's own per-user creds slot — never touch the shared
+    // CREDS_PATH here, or every other user's login breaks the moment one password changes.
+    var toolUHash=await sha256(uname.toLowerCase().trim());
+    var toolPHash=await sha256(pw.trim());
+    await fPatch('tool_auth/user_creds',{[toolUHash]:{u:toolUHash,p:toolPHash}});
+    // Save plain for admin view
+    var plainPatch={};plainPatch[uname.toLowerCase()]=pw;
+    await fPatch(ADMINPW_PATH,plainPatch);
+    // Force logout user so they re-login with new password
+    var key=uname.toLowerCase().replace(/[.#$[\]]/g,'_');
+    await fPatch(USERS_PATH+'/'+key,{passwordChangedAt:new Date().toISOString(),forceLogout:true,loggedOut:true,loggedOutAt:new Date().toISOString()});
+    // Update UI
+    var spEl=document.getElementById(uid+'_sp');
+    if(spEl){spEl.dataset.plain=pw;spEl.textContent='••••••••';spEl.dataset.visible='false';}
+    pi.value='';
+    _plainPwMap[uname.toLowerCase()]=pw;
+    showPwMsg(mi,'✓ Password updated — user logged out','ok');
+  }catch(e){showPwMsg(mi,'✗ '+e.message,'err');}
+}
+
+async function delUser(uname){
+  if(!confirm('Delete "'+uname+'"?\nThis removes login access.'))return;
+  try{
+    // Delete from users_list
+    var updated=Object.assign({},_credMap);delete updated[uname];delete updated[uname.toLowerCase()];
+    if(Object.keys(updated).length){
+      await fPut(USERS_LIST_PATH,updated);
+    }else{
+      await fDel(USERS_LIST_PATH);
+    }
+    // Remove plain password record
+    var plainUpdated=Object.assign({},_plainPwMap);delete plainUpdated[uname.toLowerCase()];
+    if(Object.keys(plainUpdated).length){await fPut(ADMINPW_PATH,plainUpdated);}else{await fDel(ADMINPW_PATH);}
+    // Remove their per-user login credential so they can no longer sign in at all
+    var toolUHash=await sha256(uname.toLowerCase().trim());
+    await fDel('tool_auth/user_creds/'+toolUHash);
+    // Force-logout any active session of theirs right now
+    var key=uname.toLowerCase().replace(/[.#$[\]]/g,'_');
+    await fPatch(USERS_PATH+'/'+key,{forceLogout:true,loggedOut:true,loggedOutAt:new Date().toISOString()});
+    delete _credMap[uname];delete _credMap[uname.toLowerCase()];
+    loadPwGrid();
+  }catch(e){alert('Error: '+e.message);}
+}
+
+async function addUser(){
+  var nm=document.getElementById('newName').value.trim();
+  var pw=document.getElementById('newPass').value.trim();
+  var mi=document.getElementById('addMsg');
+  if(!nm){showFMsg(mi,'⚠ Enter a username','err');return;}
+  if(pw.length<6){showFMsg(mi,'⚠ Password must be at least 6 chars','err');return;}
+  if(_credMap.hasOwnProperty(nm.toLowerCase())){showFMsg(mi,'⚠ Username already exists','err');return;}
+  showFMsg(mi,'Adding…','');
+  try{
+    var hashed=await hashPassword(pw,nm);
+    // Store in users_list for admin management
+    var listPatch={};listPatch[nm.toLowerCase()]=hashed;
+    await fPatch(USERS_LIST_PATH,listPatch);
+    // Write ONLY to this user's own per-user creds slot — the shared CREDS_PATH
+    // is never touched here, so adding a user can't break anyone else's login.
+    var toolUHash=await sha256(nm.toLowerCase().trim());
+    var toolPHash=await sha256(pw.trim());
+    await fPatch('tool_auth/user_creds',{[toolUHash]:{u:toolUHash,p:toolPHash}});
+    // Store plain for admin view
+    var plainPatch={};plainPatch[nm.toLowerCase()]=pw;
+    await fPatch(ADMINPW_PATH,plainPatch);
+    // Ensure user_limits entry exists for this username (default 1)
+    var limCheck=await fGet('tool_auth/user_limits');
+    if(!limCheck||!limCheck[nm.toLowerCase()]){
+      var limPatch={};limPatch[nm.toLowerCase()]=1;
+      await fPatch('tool_auth/user_limits',limPatch);
+    }
+    // No session_salt bump and no online_sessions wipe here — adding a brand-new
+    // user has no reason to force-logout everyone else who's already signed in.
+    _credMap[nm.toLowerCase()]=hashed;
+    _plainPwMap[nm.toLowerCase()]=pw;
+    document.getElementById('newName').value='';
+    document.getElementById('newPass').value='';
+    showFMsg(mi,'✓ User added','ok');
+    loadPwGrid();
+  }catch(e){showFMsg(mi,'✗ '+e.message,'err');}
+}
+
+async function rehashAllPasswords(){
+  // Auto-reads stored plain passwords - no prompts needed!
+  var msg=document.getElementById('rehashMsg');
+  msg.style.display='block'; msg.textContent='Fixing password hashes…';
+  try{
+    var plainPws=await fGet(ADMINPW_PATH);
+    if(!plainPws||!Object.keys(plainPws).length){
+      msg.textContent='⚠ No stored passwords found. Use Save button on each user card first.';
+      return;
+    }
+    var updated=0;
+    for(var uname of Object.keys(plainPws)){
+      var plain=plainPws[uname];
+      if(!plain)continue;
+      var hashed=await hashPassword(plain,uname);
+      var listPatch={};listPatch[uname]=hashed;
+      await fPatch(USERS_LIST_PATH,listPatch);
+      _credMap[uname]=hashed;
+      var toolUHash=await sha256(uname.toLowerCase().trim());
+      var toolPHash=await sha256(plain.trim());
+      // Write to per-user creds map only — do not touch the shared CREDS_PATH,
+      // it would overwrite whichever user happens to be processed last.
+      await fPatch('tool_auth/user_creds',{[toolUHash]:{u:toolUHash,p:toolPHash}});
+      updated++;
+    }
+    msg.textContent=updated>0?'✓ Fixed '+updated+' user(s). All logins should work now.':'No passwords updated.';
+  }catch(e){
+    msg.textContent='⚠ Error: '+e.message;
+  }
+}
+async function setUserLimit(uname,uid,limit){
+  var lmEl=document.getElementById(uid+'_lm');
+  var limvalEl=document.getElementById(uid+'_limval');
+  var limitBtnsEl=document.getElementById(uid+'_limitbtns');
+  var dotsEl=document.getElementById(uid+'_dots');
+  var limstatEl=document.getElementById(uid+'_limstat');
+  if(lmEl){lmEl.textContent='Saving…';lmEl.className='pw-msg';}
+  try{
+    var key=uname.toLowerCase().replace(/[.#$[\]]/g,'_');
+    var lp={};lp[uname.toLowerCase()]=limit;
+    await fPatch('tool_auth/user_limits',lp);
+    await fPatch(USERS_PATH+'/'+key,{maxSessions:limit});
+    _userLimitMap[uname.toLowerCase()]=limit;
+    if(limvalEl)limvalEl.textContent=limit+' / 5';
+    if(limitBtnsEl)limitBtnsEl.querySelectorAll('.limit-btn').forEach(function(btn){btn.classList.toggle('active',parseInt(btn.textContent)===limit);});
+    if(dotsEl)dotsEl.innerHTML=Array.from({length:5},function(_,i){var cls='limit-dot';if(i<limit)cls+='';return '<div class="'+cls+'" title="Slot '+(i+1)+'"></div>';}).join('');
+    if(limstatEl)limstatEl.textContent='max '+limit;
+    if(lmEl){lmEl.textContent='✓ Limit set to '+limit+' user'+(limit>1?'s':'');lmEl.className='pw-msg ok';}
+    setTimeout(function(){if(lmEl){lmEl.textContent='';lmEl.className='pw-msg';}},3000);
+  }catch(e){if(lmEl){lmEl.textContent='✗ '+e.message;lmEl.className='pw-msg err';}}
+}
+
+// ═══ DEVICE LICENSES ═══
+async function loadLicenses(){
+  var grid=document.getElementById('licenseGrid');
+  grid.innerHTML='<div class="sec-empty" style="grid-column:1/-1"><span class="spinner"></span>Loading licenses…</div>';
+  try{
+    var licenses=await fGet(LIC_PATH);
+    if(!licenses||typeof licenses!=='object'||Array.isArray(licenses)){
+      grid.innerHTML='<div class="sec-empty" style="grid-column:1/-1">📭 No device licenses found yet.<br><br><span style="font-size:11px;font-family:\'Courier New\',monospace;">Devices register automatically when a user tries to log in on a new device.<br>Check your Firebase at: <b>tool_auth/licenses/</b></span></div>';
+      return;
+    }
+    var entries=Object.entries(licenses);
+    if(!entries.length){grid.innerHTML='<div class="sec-empty" style="grid-column:1/-1">📭 No device licenses yet — they appear when users first log in.</div>';return;}
+    grid.innerHTML=entries.map(function(kv){
+      var installId=kv[0];var d=kv[1];
+      if(!d||typeof d!=='object')return '';
+      var status=d.revoked?'revoked':d.approved?'approved':'pending';
+      var label=d.revoked?'✕ Revoked':d.approved?'✓ Approved':'⏳ Pending';
+      var fp=d.deviceFingerprint?d.deviceFingerprint.slice(0,20)+'…':'—';
+      var regAt=d.registeredAt?new Date(d.registeredAt).toLocaleString():'—';
+      var ua=(d.userAgent||'—').slice(0,60);
+      var safeId=installId.replace(/'/g,"\\'");
+      var safeUser=(d.requestedBy||'').replace(/'/g,"\\'");
+      var isPending=!d.approved&&!d.revoked;
+      return '<div class="lic-card '+status+'">'+
+        '<div class="lic-card-top">'+
+        '<div class="lic-id" title="'+installId+'">🆔 '+installId.slice(0,28)+'…</div>'+
+        '<div class="lic-badge '+status+'">'+label+'</div>'+
+        '</div>'+
+        (d.requestedBy?'<div style="margin:4px 0;padding:5px 10px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:6px;display:flex;align-items:center;gap:8px;">'+
+        '<span style="font-size:15px;">👤</span>'+
+        '<div><div style="font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.6px;">Requested by</div>'+
+        '<div style="font-size:13px;font-weight:700;color:#60a5fa;">'+eh(d.requestedBy)+'</div></div>'+
+        (isPending?'<span style="margin-left:auto;font-size:10px;background:rgba(245,158,11,.15);color:#fb923c;border:1px solid rgba(245,158,11,.25);border-radius:4px;padding:2px 7px;font-weight:700;">⏳ AWAITING</span>':'')+
+        '</div>':'')+
+        '<div class="lic-meta">'+
+        '<b>PC:</b> <span style="color:#7dd3fc;font-family:\'Courier New\',monospace">'+eh(d.pcLabel||'—')+'</span><br>'+
+        '<b>Fingerprint:</b> <span>'+eh(fp)+'</span><br>'+
+        '<b>Registered:</b> <span>'+regAt+'</span><br>'+
+        '<b>User Agent:</b> <span style="font-size:10px;">'+eh(ua)+'</span>'+
+        '</div>'+
+        '<div class="lic-actions">'+
+        ((!d.approved||d.revoked)?'<button class="lic-btn approve" onclick="licApprove(\''+safeId+'\')">✓ Approve</button>':'')+
+        (!d.revoked?'<button class="lic-btn revoke" onclick="licRevoke(\''+safeId+'\',\''+safeUser+'\')">✕ Revoke</button>':'<button class="lic-btn approve" onclick="licApprove(\''+safeId+'\')">↺ Re-approve</button>')+
+        '<button class="lic-btn delete" onclick="licDelete(\''+safeId+'\',\''+safeUser+'\')">🗑 Delete</button>'+
+        '</div></div>';
+    }).join('');
+  }catch(e){grid.innerHTML='<div class="sec-empty" style="grid-column:1/-1;border-color:#ef4444;">✗ Error: '+eh(e.message)+'<br><span style="font-size:11px;">Make sure Firebase DB is in Test Mode.</span></div>';}
+}
+
+async function licApprove(installId){
+  try{await fPatch(LIC_PATH+'/'+installId,{approved:true,revoked:false,approvedAt:new Date().toISOString()});await loadLicenses();}
+  catch(e){alert('Error approving: '+e.message);}
+}
+async function licRevoke(installId,username){
+  if(!confirm('Revoke this device'+(username?' for user "'+username+'"':'')+' ? The user will be logged out immediately.'))return;
+  try{
+    await fPatch(LIC_PATH+'/'+installId,{revoked:true,approved:false,revokedAt:new Date().toISOString()});
+    if(username){
+      var key=username.toLowerCase().replace(/[.#$[\]]/g,'_');
+      await fPatch(USERS_PATH+'/'+key,{forceLogout:true,loggedOut:true,loggedOutAt:new Date().toISOString()});
+    }
+    await loadLicenses();
+  }catch(e){alert('Error revoking: '+e.message);}
+}
+async function licDelete(installId,username){
+  if(!confirm('Delete this license record? The device will need re-approval on next login.'))return;
+  try{
+    if(username){var key=username.toLowerCase().replace(/[.#$[\]]/g,'_');await fPatch(USERS_PATH+'/'+key,{forceLogout:true,loggedOut:true,loggedOutAt:new Date().toISOString()});}
+    await fDel(LIC_PATH+'/'+installId);
+    await loadLicenses();
+  }catch(e){alert('Error deleting: '+e.message);}
+}
+
+// ═══ UI HELPERS ═══
+function toggleEye(inputId,btn){
+  var inp=document.getElementById(inputId);if(!inp)return;
+  if(inp.type==='password'){inp.type='text';btn.textContent='🙈';}else{inp.type='password';btn.textContent='👁';}
+}
+function toggleStoredPw(valId,btn){
+  var val=document.getElementById(valId);if(!val)return;
+  var isHidden=val.dataset.visible!=='true';
+  if(isHidden){val.dataset.visible='true';val.style.filter='none';val.textContent=val.dataset.plain||'(not stored)';if(btn){btn.textContent='🙈 Hide';btn.style.borderColor='rgba(239,68,68,.4)';btn.style.color='#f87171';}}
+  else{val.dataset.visible='false';val.style.filter='';val.textContent='••••••••';if(btn){btn.textContent='👁 Show';btn.style.borderColor='rgba(34,197,94,.3)';btn.style.color='#22c55e';}}
+}
+function showMsg(id,text,cls){var el=document.getElementById(id);if(!el)return;el.textContent=text;el.className='adm-msg '+cls;}
+function showPwMsg(el,text,cls){el.textContent=text;el.className='pw-msg '+cls;if(cls==='ok')setTimeout(function(){el.textContent='';el.className='pw-msg';},5000);}
+function showFMsg(el,text,cls){el.textContent=text;el.className='fmsg '+cls;if(cls==='ok')setTimeout(function(){el.textContent='';el.className='fmsg';},5000);}
+function eh(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ═══ INIT ═══
+showDashboard('admin');
+
+</script>
+</body>
+</html>
